@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Card, Input, Button } from 'antd';
+import axios from 'axios';
 
 interface Post {
   id: string;
@@ -63,3 +64,5 @@ const DiscussionBoard = () => {
     </div>
   );
 };
+
+export default DiscussionBoard;

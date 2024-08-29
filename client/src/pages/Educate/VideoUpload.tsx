@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, Button, message } from 'antd';
 import axios from 'axios';
+import { UploadOutlined } from '@ant-design/icons';
 
 const VideoUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -9,7 +10,7 @@ const VideoUpload = () => {
   const handleUpload = () => {
     setUploading(true);
     const formData = new FormData();
-    formData.append('video', file);
+    formData.append('video', file as File);
 
     axios.post('/api/upload-video', formData)
       .then((response) => {
@@ -22,13 +23,15 @@ const VideoUpload = () => {
       });
   };
 
+  const handleBeforeUpload = (file: File) => {
+    setFile(file);
+    return file;
+  };
+
   return (
     <div>
       <Upload
-        beforeUpload={(file) => {
-          setFile(file);
-          return false;
-        }}
+        beforeUpload={handleBeforeUpload}
         fileList={[]}
       >
         <Button>
@@ -44,4 +47,6 @@ const VideoUpload = () => {
       </Button>
     </div>
   );
-};
+}
+
+export default VideoUpload;
