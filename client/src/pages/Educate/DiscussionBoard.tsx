@@ -20,7 +20,8 @@ const DiscussionBoard = () => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get('/api/posts');
-      setPosts(response.data);
+      console.log(response)
+      // setPosts(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }

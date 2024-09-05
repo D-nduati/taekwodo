@@ -1,25 +1,18 @@
-import styles from './index.less';
+
 import AuthForm from './Logins/login';
 import {Card, Layout} from 'antd';
-import { Container} from '@mui/material';
+
 
 const { Content } = Layout;
 
 export default function IndexPage() {
-  return (
-    <Container>
+  return (    
       <Layout>
         <Content>
-          <Card style={{ width: '50%', height:'100vh' , margin: 'auto',
-          textWrap: 'wrap',
-          backgroundColor: '#f0f0f0', padding: 20, borderRadius: '10'}}>
+          <Card>
           <AuthForm />
           </Card> 
         </Content>
-      </Layout>
-    </Container>
-     
-      
-   
+      </Layout> 
   );
 }
