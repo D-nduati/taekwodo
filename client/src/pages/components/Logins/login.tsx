@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { Card, Divider, Spin, Alert, Typography, Input, Button, Form, Layout, message } from 'antd';
-import { useHistory } from 'react-router-dom';
-
+import { history } from 'umi';
+import axios from 'axios';
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -27,7 +27,8 @@ function AuthForm() {
     try {
       setLoading(true);
       let url = '';
-
+  
+      // Determine the correct URL based on form type
       switch (formType) {
         case FormType.LOGIN:
           url = 'http://localhost:4000/login';
@@ -41,38 +42,33 @@ function AuthForm() {
         default:
           throw new Error('Invalid form type');
       }
-
-      const response = await fetch(url, {
-        method: 'POST',
+  
+      // Make the POST request with Axios
+      const response = await axios.post(url, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
       });
-
-      const contentType = response.headers.get('Content-Type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem("token", data.token);
-          message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
-          redirect('/dashboard');
-        } else {
-          message.error(data.message || `${formType.charAt(0).toUpperCase() + formType.slice(1)} failed. Please try again.`);
-        }
+  
+      const data = response.data;
+      localStorage.setItem('token', data.token);
+      message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
+      history.push('/dashboard');
+  
+    } catch (err:any) {
+      
+      if (err.response && err.response.data && err.response.data.message) {
+        message.error(err.response.data.message);
       } else {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        message.error('Unexpected response from the server. Please try again.');
+        message.error(`${formType.charAt(0).toUpperCase() + formType.slice(1)} failed. Please try again.`);
       }
-    } catch (err) {
-      message.error('Error posting form data. Please try again.');
       console.error('Error posting form data:', err);
+  
     } finally {
       setLoading(false);
     }
   };
-
+  
   const fadeIn = useSpring({ opacity: 1, from: { opacity: 0 } });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +82,7 @@ function AuthForm() {
   const handleLogout = () => {
     localStorage.removeItem("token"); 
     message.success("Logged out successfully");
-    redirect('/login')
+   history.push('/login')
   };
   
 
