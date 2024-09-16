@@ -1,7 +1,7 @@
 import React from 'react';
-import { List, Card, Typography, Calendar } from 'antd';
+import { List, Card, Calendar, Layout } from 'antd';
 
-const { Title } = Typography;
+const { Content } = Layout;
 
 const trainingData = [
   { date: '2024-09-10', type: 'Sparring' },
@@ -11,8 +11,10 @@ const trainingData = [
 
 const Training: React.FC = () => {
   return (
-    <div className="training-page">
-      <Title level={2}>Training Schedule</Title>
+    <Layout >
+     
+    
+    <Content>
       <Card bordered={false} style={{ maxWidth: 800, margin: 'auto' }}>
         <List
           itemLayout="horizontal"
@@ -28,10 +30,15 @@ const Training: React.FC = () => {
         />
       </Card>
 
-      <Card title="Training Calendar" bordered={false} style={{ marginTop: 20 }}>
+      <Card
+        title="Training Calendar"
+        bordered={false}
+        style={{ marginTop: 20 }}
+      >
         <Calendar fullscreen={false} />
       </Card>
-    </div>
+    </Content>
+    </Layout>
   );
 };
 

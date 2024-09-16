@@ -3,6 +3,8 @@ import { useSpring, animated } from 'react-spring';
 import { Card, Divider, Spin, Alert, Typography, Input, Button, Form, Layout, message } from 'antd';
 import { history } from 'umi';
 import axios from 'axios';
+// import { useUser } from '@pages/userContext.js; 
+
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -19,6 +21,8 @@ function AuthForm() {
     password: '',
     email: '',
   });
+  // const { setUsername } = useUser(); 
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +47,6 @@ function AuthForm() {
           throw new Error('Invalid form type');
       }
   
-      // Make the POST request with Axios
       const response = await axios.post(url, formData, {
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +56,19 @@ function AuthForm() {
       const data = response.data;
       localStorage.setItem('token', data.token);
       message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
-      history.push('/dashboard');
+      // setUsername(data.username);
+
+      // if (data.username=== "admin") {
+      //   history.push("/admin");
+      // } else {
+        
+      //   // history.push("/land");
+      // }
+      
+         history.push('/dashboard');
+
+      
+
   
     } catch (err:any) {
       

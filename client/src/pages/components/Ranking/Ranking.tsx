@@ -1,7 +1,9 @@
 import React from 'react';
-import { Table, Typography, Card } from 'antd';
+import { Table, Typography,  Layout,Card } from 'antd';
+
 
 const { Title } = Typography;
+
 
 const rankingData = [
   { key: '1', rank: 1, name: 'John Doe', score: 95 },

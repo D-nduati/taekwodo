@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Avatar, List, Typography } from 'antd';
+import { Card, Avatar, List, Layout,Typography } from 'antd';
 import { UserOutlined, TrophyOutlined } from '@ant-design/icons';
+
 
 const { Title, Text } = Typography;
 
@@ -9,6 +10,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="profile-page">
+     
       <Card bordered={false} style={{ maxWidth: 600, margin: 'auto' }}>
         <Avatar size={100} icon={<UserOutlined />} />
         <Title level={2}>John Doe</Title>

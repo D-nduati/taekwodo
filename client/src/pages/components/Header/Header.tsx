@@ -1,49 +1,57 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button, Avatar, Row, Col, Badge } from 'antd';
 import { Link } from 'umi';
+import { LogoutOutlined } from '@ant-design/icons';
+import { history } from 'umi';
 
 const { Header } = Layout;
 
+const handleLogout = () => {
+  history.push('/');
+};
+
 const AppHeader: React.FC = () => {
   return (
-    <Layout>
-      <Header style={{ backgroundColor: '#001529' }}>
-        <div className="logo" style={{ color: '#fff', fontSize: '24px', float: 'left', marginRight: '20px' }}>
-          MyApp
-        </div>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['/']}
-          style={{ lineHeight: '64px', backgroundColor: '#001529', color: '#fff' }}
-        >
-          <Menu.Item key="/">
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="/educate">
-            <Link to="/educate">Educate</Link>
-          </Menu.Item>
-          <Menu.Item key="/profile">
-            <Link to="/profile">Profile</Link>
-          </Menu.Item>
-          <Menu.Item key="/pricing">
-            <Link to="/pricing">Pricing</Link>
-          </Menu.Item>
-          <Menu.Item key="/discussion">
-            <Link to="/discussion">Discussion</Link>
-          </Menu.Item>
-          <Menu.Item key="/videofilter">
-            <Link to="/videofilter">Video Filter</Link>
-          </Menu.Item>
-          <Menu.Item key="/videorating">
-            <Link to="/videorating">Video Rating</Link>
-          </Menu.Item>
-          <Menu.Item key="/videoupload">
-            <Link to="/videoupload">Video Upload</Link>
-          </Menu.Item>
-        </Menu>
-      </Header>
-    </Layout>
+    <Header style={{ padding: '0', backgroundColor: '#fff' }}>
+      <Menu
+        theme="light"
+        mode="horizontal"
+        defaultSelectedKeys={['1']}
+        style={{ width: '100%' }}
+      >
+        <Menu.Item key="1">
+          <Link to="/profile">Profile</Link>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Link to="/training">Training</Link>
+        </Menu.Item>
+        <Menu.Item key="3">
+          <Link to="/rankings">Rankings</Link>
+        </Menu.Item>
+        <Menu.Item key="4">
+          <Link to="/quiz">Quizes</Link>
+        </Menu.Item>
+        <Menu.Item key="5">
+          <Link to="/enroll">Enroll With Us</Link>
+        </Menu.Item>
+        <Menu.Item key="6" style={{ marginLeft: 'auto' }}>
+          <Badge count={5}>
+            <Avatar shape="square" size="small" />
+          </Badge>
+        </Menu.Item>
+        <Menu.Item  key="7">
+
+          <Button
+            type="link"
+            onClick={handleLogout}
+            icon={<LogoutOutlined />}
+            style={{ marginLeft: 'auto' }}
+          >
+            Logout
+          </Button>
+        </Menu.Item>
+      </Menu>
+    </Header>
   );
 };
 

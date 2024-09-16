@@ -1,19 +1,25 @@
 import { defineConfig } from 'umi';
-
 export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
   routes: [
-    { path: '/', component: '@/pages/index' },
-    { path: '/dashboard', component: '@/pages/components/Dashboard/Dashboard' },
-    { path: '/educate', component: '@/pages/components/Educate/Educate' },
-    { path: '/profile', component: '@/pages/components/Profile/Profile' },
-    { path: '/training', component: '@/pages/components/Training/Training' },
-    { path: '/pricing', component: '@/pages/components/PricingComponent/Pricing' },
-    {path: '/rankings' , component: '@/pages/components/Ranking/Ranking'},
-    { path: '/videorating', component: '@/pages/components/Educate/VideoRating' },
-    {path: '/videoupload', component: '@/pages/components/Educate/VideoUpload'}
+    {
+      path: '/',
+      component: '@/pages/components/Logins/Login', 
+      routes: [
+        { path: '/land', component: '@/pages/components/LandingPage/Land' },
+        { path: '/profile', component: '@/pages/components/Profile/Profile' },
+        { path: '/training', component: '@/pages/components/Training/Training' }, 
+        { path: '/rankings', component: '@/pages/components/Ranking/Ranking' }, 
+        { path: '/quiz', component: '@/pages/components/Quizes/Quiz' }, 
+        { path: '/members', component: '@/pages/components/Members/Members' }, 
+        { path: '/settings', component: '@/pages/components/Settings/Settings' }, 
+        { path: '/enroll', component: '@/pages/components/Enroll/EnrollWithUs' }, 
+      ],
+      fastRefresh: {},
+    },
   ],
-  fastRefresh: {},
 });
+
+
