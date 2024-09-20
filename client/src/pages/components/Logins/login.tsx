@@ -3,7 +3,6 @@ import { useSpring, animated } from 'react-spring';
 import { Card, Divider, Spin, Alert, Typography, Input, Button, Form, Layout, message } from 'antd';
 import { history } from 'umi';
 import axios from 'axios';
-// import { useUser } from '@pages/userContext.js; 
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -21,18 +20,14 @@ function AuthForm() {
     password: '',
     email: '',
   });
-  // const { setUsername } = useUser(); 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   const handleFormSubmit = async () => {
     try {
       setLoading(true);
       let url = '';
-  
-      // Determine the correct URL based on form type
       switch (formType) {
         case FormType.LOGIN:
           url = 'http://localhost:4000/login';
@@ -46,44 +41,31 @@ function AuthForm() {
         default:
           throw new Error('Invalid form type');
       }
-  
+
       const response = await axios.post(url, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
+
       const data = response.data;
       localStorage.setItem('token', data.token);
       message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
-      // setUsername(data.username);
+      history.push('/dashboard');
 
-      // if (data.username=== "admin") {
-      //   history.push("/admin");
-      // } else {
-        
-      //   // history.push("/land");
-      // }
-      
-         history.push('/dashboard');
-
-      
-
-  
-    } catch (err:any) {
-      
+    } catch (err: any) {
       if (err.response && err.response.data && err.response.data.message) {
         message.error(err.response.data.message);
       } else {
         message.error(`${formType.charAt(0).toUpperCase() + formType.slice(1)} failed. Please try again.`);
       }
       console.error('Error posting form data:', err);
-  
+
     } finally {
       setLoading(false);
     }
   };
-  
+
   const fadeIn = useSpring({ opacity: 1, from: { opacity: 0 } });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,13 +76,6 @@ function AuthForm() {
     }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    message.success("Logged out successfully");
-   history.push('/login')
-  };
-  
-
   return (
     <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'linear-gradient(to right, #ff7e5f, #feb47b)' }}>
       <animated.div style={fadeIn}>
@@ -108,21 +83,20 @@ function AuthForm() {
           style={{
             maxWidth: 400,
             borderRadius: '10px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
             padding: '20px',
             background: 'white',
+            overflow: 'hidden',
           }}
         >
           <Typography>
-            <Title style={{ color: '#ff7e5f', textAlign: 'center', whiteSpace: 'nowrap' }}>
+            <Title style={{ color: '#ff7e5f', textAlign: 'center' }}>
               {formType === FormType.LOGIN ? 'Login' : formType === FormType.SIGNUP ? 'Sign Up' : 'Forgot Password'}
             </Title>
           </Typography>
           <Divider />
           {loading ? (
             <Spin size="large" />
-          ) : error ? (
-            <Alert message="Error" description={error} type="error" showIcon />
           ) : (
             <Form layout="vertical" onFinish={handleFormSubmit}>
               {formType === FormType.SIGNUP && (
@@ -133,7 +107,7 @@ function AuthForm() {
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Enter Your Username"
-                    style={{ width: '100%', padding: '10px', borderRadius: '8px' }}
+                    style={{ width: '100%', borderRadius: '8px' }}
                   />
                 </Form.Item>
               )}
@@ -144,7 +118,7 @@ function AuthForm() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter Your Email"
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px' }}
+                  style={{ width: '100%', borderRadius: '8px' }}
                 />
               </Form.Item>
               {formType !== FormType.FORGOT_PASSWORD && (
@@ -155,7 +129,7 @@ function AuthForm() {
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Enter Your Password"
-                    style={{ width: '100%', padding: '10px', borderRadius: '8px' }}
+                    style={{ width: '100%', borderRadius: '8px' }}
                   />
                 </Form.Item>
               )}
@@ -163,13 +137,13 @@ function AuthForm() {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="btn-hover"
                   style={{
                     backgroundColor: '#ff7e5f',
                     borderColor: '#ff7e5f',
-                    padding: '0 30px',
+                    padding: '10px 20px',
                     fontSize: '16px',
                     transition: 'all 0.3s ease-in-out',
+                    width: '100%',
                   }}
                 >
                   {formType === FormType.LOGIN ? 'Login' : formType === FormType.SIGNUP ? 'Sign Up' : 'Reset Password'}

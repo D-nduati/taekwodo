@@ -5,11 +5,14 @@ export default defineConfig({
   },
   routes: [
     {
-      path: '/',
-      component: '@/pages/components/Logins/Login', 
+      path: '/', //should show the login form
       routes: [
+        
+        { path: '/login', component: '@/pages/components/Logins/Login' },
         { path: '/land', component: '@/pages/components/LandingPage/Land' },
+        {path: '/dashboard', component: '@/pages/components/Dashboard/Dashboard'},
         { path: '/profile', component: '@/pages/components/Profile/Profile' },
+        { path: '/educate', component: '@/pages/components/Educate/Educate' },
         { path: '/training', component: '@/pages/components/Training/Training' }, 
         { path: '/rankings', component: '@/pages/components/Ranking/Ranking' }, 
         { path: '/quiz', component: '@/pages/components/Quizes/Quiz' }, 
@@ -21,5 +24,3 @@ export default defineConfig({
     },
   ],
 });
-
-

@@ -1,0 +1,81 @@
+.settings-page {
+    padding: 30px;
+    background-color: #f0f2f5;
+  }
+  
+  .settings-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .settings-header h2 {
+    font-size: 28px;
+    color: #1f1f1f;
+    font-weight: bold;
+  }
+  
+  .settings-header p {
+    color: #666;
+  }
+  
+  .profile-section {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .avatar-wrapper {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .avatar-img {
+    transition: transform 0.3s ease;
+  }
+  
+  .avatar-wrapper:hover .avatar-img {
+    transform: scale(1.05);
+  }
+  
+  .edit-icon {
+    position: absolute;
+    top: 80px;
+    left: 80px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 10px;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+  
+  .avatar-wrapper:hover .edit-icon {
+    opacity: 1;
+  }
+  
+  .click-to-edit {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #888;
+  }
+  
+  .settings-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .settings-form .ant-form-item {
+    margin-bottom: 16px;
+  }
+  
+  .settings-form .save-btn {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    width: 100%;
+  }
+  
+  .settings-form .save-btn:hover {
+    background-color: #40a9ff;
+  }
+  
+  

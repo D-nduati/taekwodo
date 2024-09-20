@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
-const sql = require("mssql/msnodesqlv8");
+const sql = require("mssql/msnodesql");
 const app = express();
 
 const authMiddleware = require('./middleware/authMiddleware')
