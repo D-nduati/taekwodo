@@ -12,12 +12,12 @@ const handleLogout = () => {
 
 const AppHeader: React.FC = () => {
   return (
-    <Header style={{ padding: '0', backgroundColor: '#48CFCB' }}>
+    <Header style={{ padding: '0', backgroundColor: '#6482AD' }}>
       <Menu
         theme="light"
         mode="horizontal"
         defaultSelectedKeys={['1']}
-        style={{ width: '100%' ,backgroundColor: '#48CFCB'}}
+        style={{ width: '100%' ,backgroundColor: '#6482AD'}}
       >
         <Menu.Item key="1">
           <Link to="/dashboard/profile">Profile</Link>

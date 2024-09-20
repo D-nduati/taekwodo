@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Switch, Upload, Avatar, Row, Col, message, Modal, Select } from 'antd';
-import { EditOutlined,UploadOutlined, LockOutlined, CheckCircleOutlined, CloseOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Switch, Upload, Avatar, Row, Col, message, Modal, Select, Typography } from 'antd';
+import { EditOutlined,UploadOutlined} from '@ant-design/icons';
 import './Settings.css';
 
 const { Option } = Select;
+const {Paragraph} = Typography;
 
 const Settings: React.FC = () => {
   const [form] = Form.useForm();
@@ -37,8 +38,7 @@ const Settings: React.FC = () => {
       <Row justify="center">
         <Col xs={24} sm={18} md={12}>
           <div className="settings-header">
-            <h2>User Settings</h2>
-            <p>Manage your profile, security, and preferences.</p>
+            <Paragraph>Manage your profile, security, and preferences.</Paragraph>
           </div>
 
           {/* Profile Picture Section */}
@@ -54,7 +54,7 @@ const Settings: React.FC = () => {
 
           <Modal
             title="Change Profile Picture"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={handleAvatarChange}
             onCancel={handleCancelModal}
             okText="Confirm"
@@ -77,8 +77,8 @@ const Settings: React.FC = () => {
             layout="vertical"
             onFinish={handleFormSubmit}
             initialValues={{
-              username: 'JohnDoe',
-              email: 'john.doe@example.com',
+              username: 'Sam',
+              email: 'sam@gmail.com',
               receiveEmails: true,
               receiveNotifications: true,
               theme: 'light',

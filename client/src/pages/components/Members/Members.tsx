@@ -102,6 +102,8 @@ const Members: React.FC = () => {
         title="Create a Post"
         bordered={false}
         style={{
+          width: '65%',
+          margin:'auto',
           marginBottom: '20px',
           borderRadius: '8px',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -139,7 +141,7 @@ const Members: React.FC = () => {
         </div>
       </Card>
 
-      {/* Post feed */}
+      
       <List
         dataSource={posts}
         renderItem={(post) => (
@@ -147,6 +149,8 @@ const Members: React.FC = () => {
             key={post.id}
             bordered={false}
             style={{
+              width: '65%',
+              margin:'auto',
               marginBottom: '20px',
               borderRadius: '8px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -214,153 +218,3 @@ export default Members;
 
 
 
-// import React, { useState, useEffect, useRef } from 'react';
-// import { Card, Input, Button, Upload, List, Avatar, Comment, Tooltip } from 'antd';
-// import { UploadOutlined, LikeOutlined, LikeFilled, MessageOutlined } from '@ant-design/icons';
-// import io from 'socket.io-client';
-// import moment from 'moment';
-
-// const { TextArea } = Input;
-
-// interface Post {
-//   id: string;
-//   author: string;
-//   content: string;
-//   imageUrl?: string;
-//   videoUrl?: string;
-//   likes: number;
-//   comments: { author: string; content: string }[];
-//   timestamp: string;
-// }
-
-// const socket = io('http://localhost:5000'); // Replace with your backend socket URL
-
-// const Members: React.FC = () => {
-//   const [posts, setPosts] = useState<Post[]>([]);
-//   const [newPostContent, setNewPostContent] = useState('');
-//   const [newCommentContent, setNewCommentContent] = useState<{ [key: string]: string }>({});
-//   const [imageFile, setImageFile] = useState(null);
-//   const [videoFile, setVideoFile] = useState(null);
-
-//   const handleLikePost = (postId: string) => {
-//     socket.emit('likePost', postId); // Emit a 'likePost' event to the server
-//   };
-
-//   const handleAddComment = (postId: string) => {
-//     if (newCommentContent[postId]) {
-//       socket.emit('commentPost', { postId, content: newCommentContent[postId] });
-//       setNewCommentContent({ ...newCommentContent, [postId]: '' });
-//     }
-//   };
-
-//   const handleCreatePost = () => {
-//     if (newPostContent || imageFile || videoFile) {
-//       const newPost = {
-//         content: newPostContent,
-//         imageUrl: imageFile ? URL.createObjectURL(imageFile) : null, // In a real app, upload to a server
-//         videoUrl: videoFile ? URL.createObjectURL(videoFile) : null, // In a real app, upload to a server
-//       };
-//       socket.emit('newPost', newPost); // Emit new post event to server
-//       setNewPostContent('');
-//       setImageFile(null);
-//       setVideoFile(null);
-//     }
-//   };
-
-//   useEffect(() => {
-//     // Receive post updates
-//     socket.on('updatePosts', (updatedPosts: Post[]) => {
-//       setPosts(updatedPosts);
-//     });
-
-//     return () => {
-//       socket.off('updatePosts');
-//     };
-//   }, []);
-
-//   const uploadProps = {
-//     beforeUpload: (file: any) => {
-//       const isImage = file.type.startsWith('image/');
-//       const isVideo = file.type.startsWith('video/');
-//       if (isImage) setImageFile(file);
-//       if (isVideo) setVideoFile(file);
-//       return false; // Prevent upload
-//     },
-//   };
-
-//   return (
-//     <div style={{ padding: '20px' }}>
-//       <Card title="Create a Post" bordered={false} style={{ marginBottom: '20px' }}>
-//         <TextArea
-//           rows={4}
-//           placeholder="What's on your mind?"
-//           value={newPostContent}
-//           onChange={(e) => setNewPostContent(e.target.value)}
-//         />
-//         <div style={{ marginTop: '10px' }}>
-//           <Upload {...uploadProps}>
-//             <Button icon={<UploadOutlined />}>Attach Image/Video</Button>
-//           </Upload>
-//           <Button
-//             type="primary"
-//             onClick={handleCreatePost}
-//             style={{ float: 'right', marginTop: '10px' }}
-//           >
-//             Post
-//           </Button>
-//         </div>
-//       </Card>
-
-//       <List
-//         dataSource={posts}
-//         renderItem={(post) => (
-//           <Card key={post.id} bordered={false} style={{ marginBottom: '20px' }}>
-//             <Card.Meta
-//               avatar={<Avatar>{post.author[0]}</Avatar>}
-//               title={post.author}
-//               description={moment(post.timestamp).fromNow()}
-//             />
-//             <div style={{ marginTop: '10px' }}>{post.content}</div>
-//             {post.imageUrl && <img src={post.imageUrl} alt="post" style={{ width: '100%', marginTop: '10px' }} />}
-//             {post.videoUrl && <video src={post.videoUrl} controls style={{ width: '100%', marginTop: '10px' }} />}
-//             <div style={{ marginTop: '10px' }}>
-//               <Tooltip title="Like">
-//                 <Button
-//                   icon={post.likes ? <LikeFilled /> : <LikeOutlined />}
-//                   onClick={() => handleLikePost(post.id)}
-//                 >
-//                   {post.likes}
-//                 </Button>
-//               </Tooltip>
-//               <Button icon={<MessageOutlined />} style={{ marginLeft: '10px' }}>
-//                 {post.comments.length} Comments
-//               </Button>
-//             </div>
-//             <List
-//               dataSource={post.comments}
-//               renderItem={(comment) => (
-//                 <Comment
-//                   author={comment.author}
-//                   content={comment.content}
-//                 />
-//               )}
-//               style={{ marginTop: '10px' }}
-//             />
-//             <TextArea
-//               rows={1}
-//               placeholder="Add a comment..."
-//               value={newCommentContent[post.id] || ''}
-//               onChange={(e) => setNewCommentContent({ ...newCommentContent, [post.id]: e.target.value })}
-//               style={{ marginTop: '10px' }}
-//             />
-//             <Button type="primary" onClick={() => handleAddComment(post.id)} style={{ marginTop: '5px' }}>
-//               Comment
-//             </Button>
-//           </Card>
-//         )}
-//       />
-//     </div>
-//   );
-// };
-
-// export default Members;

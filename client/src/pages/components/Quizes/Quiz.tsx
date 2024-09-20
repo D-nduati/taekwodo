@@ -197,9 +197,9 @@ const TaekwondoQuiz: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#001529' }}>
+    <div style={{ padding: '20px' }}>
       {quizCompleted ? (
-        <Card title="Quiz Summary" bordered={false} style={{ textAlign: 'center', backgroundColor: '#ffffff' }}>
+        <Card title="Quiz Summary" bordered={false} style={{ textAlign: 'center' }}>
           <Text strong style={{ fontSize: '24px', color: '#1890ff' }}>
             Your Score: {score} / {totalQuestions}
           </Text>
@@ -225,7 +225,7 @@ const TaekwondoQuiz: React.FC = () => {
       ) : (
         <>
           <Progress percent={(currentQuestion / totalQuestions) * 100} status="active" />
-          <Card title={`Question ${currentQuestion + 1} of ${totalQuestions}`} bordered={false} style={{ marginTop: '20px', backgroundColor: '#ffffff' }}>
+          <Card title={`Question ${currentQuestion + 1} of ${totalQuestions}`} bordered={false} style={{ marginTop: '20px', minHeight:'60vh'}}>
             <Text strong>{quizQuestions[currentQuestion].question}</Text>
             <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
               {quizQuestions[currentQuestion].options.map((option, index) => (
