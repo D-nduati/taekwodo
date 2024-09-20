@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const jwt = require('jsonwebtoken')
-const sql = require("mssql/msnodesql");
+const sql = require("mssql");
 const app = express();
 
 const authMiddleware = require('./middleware/authMiddleware')
@@ -20,6 +20,13 @@ var config = {
   connectionString:
     "Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;",
 };
+
+var config={
+
+  server:'DESKTOP-5TSB55R\\SQLEXPRESS',
+  database:'Taekwondo',
+  
+}
 
 app.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
@@ -108,6 +115,6 @@ app.post("/forgot-password", async (req, res) => {
   }
 });
 
-app.listen(4000, () => {
+app.listen(4001, () => {
   console.log("Server running on port 4000");
 });

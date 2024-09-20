@@ -1,26 +1,37 @@
 import { defineConfig } from 'umi';
+
 export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
   routes: [
     {
-      path: '/', //should show the login form
+      path: '/',
+      redirect: '/login', // Redirect root to the login page
+    },
+    {
+      path: '/login',
+      component: '@/pages/components/Logins/Login',
+    },
+    {
+      path: '/land',
+      component: '@/pages/components/LandingPage/Land',
+    },
+    {
+      path: '/dashboard',
+      component: '@/pages/components/Dashboard/Dashboard',
       routes: [
-        
-        { path: '/login', component: '@/pages/components/Logins/Login' },
-        { path: '/land', component: '@/pages/components/LandingPage/Land' },
-        {path: '/dashboard', component: '@/pages/components/Dashboard/Dashboard'},
-        { path: '/profile', component: '@/pages/components/Profile/Profile' },
-        { path: '/educate', component: '@/pages/components/Educate/Educate' },
-        { path: '/training', component: '@/pages/components/Training/Training' }, 
-        { path: '/rankings', component: '@/pages/components/Ranking/Ranking' }, 
-        { path: '/quiz', component: '@/pages/components/Quizes/Quiz' }, 
-        { path: '/members', component: '@/pages/components/Members/Members' }, 
-        { path: '/settings', component: '@/pages/components/Settings/Settings' }, 
-        { path: '/enroll', component: '@/pages/components/Enroll/EnrollWithUs' }, 
+        { path: '/dashboard/profile', component: '@/pages/components/Profile/Profile' },
+        { path: '/dashboard/educate', component: '@/pages/components/Educate/Educate' },
+        { path: '/dashboard/training', component: '@/pages/components/Training/Training' },
+        { path: '/dashboard/rankings', component: '@/pages/components/Ranking/Ranking' },
+        { path: '/dashboard/quiz', component: '@/pages/components/Quizes/Quiz' },
+        { path: '/dashboard/members', component: '@/pages/components/Members/Members' },
+        { path: '/dashboard/settings', component: '@/pages/components/Settings/Settings' },
+        { path: '/dashboard/enroll', component: '@/pages/components/Enroll/EnrollWithUs' },
+        // { path: '/dashboard/home', component: '@/pages/components/Home/Home' }, // Example Home component
       ],
-      fastRefresh: {},
     },
   ],
+  fastRefresh: {},
 });
