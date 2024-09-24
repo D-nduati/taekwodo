@@ -1,93 +1,197 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
-const sql = require('mssql/msnodesqlv8');
+const bcrypt =  require('bcryptjs')
+const sql = require('mssql');
 const jwt = require('jsonwebtoken');
 
-const sendMail = require('../services/sendmail');
-const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=child;Trusted_Connection=true;'
+
+var config = {
+ 
+  server: 'DESKTOP-5TSB55R\\SQLEXPRESS',
+  database: 'Taekwondo',
+  options: {
+      trustedConnection: true,
+      connectionTimeout: 30000
+  }
 };
+
+var conn = new sql.ConnectionPool(config);
+conn.connect(function(err) {
+  if (err) console.log(err);
+});
+
+
 
 module.exports = {
   login: async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-      const pool = await sql.connect(config);
-      const result = await pool.query(`SELECT * FROM users WHERE username = '${username}'`);
-
-      if (result.recordset.length === 0) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-
+      const pool = await sql.connect(conn);
+      const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE email = @email');
       const user = result.recordset[0];
-      const validPassword = await bcrypt.compare(password, user.password);
 
-      if (!validPassword) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      if (!user) {
+        return res.status(400).json({ message: "Invalid username or password" });
       }
 
-      const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, 'your_secret_key');
-      return res.status(200).json({ success: true, message: 'Successfully logged in', token, username: user.username });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+      const isMatch = bcrypt.compareSync(password, user.PasswordHash);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid username or password" });
+      }
+
+      const token = jwt.sign({ userId: user.UserId, email: user.Email }, process.env.SECRET_KEY, {
+        expiresIn: '1h',
+      });
+
+      return res.status(200).json({
+        message: "Login successful",
+        token: token,
+        userId: user.UserId
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
     }
   },
 
   signup: async (req, res) => {
-    const user = req.body;
-    const saltRounds = 8;
+    const { username, email, password } = req.body;
 
     try {
-      const pool = await sql.connect(config);
-      const hashedPwd = await bcrypt.hash(user.password, saltRounds);
-      const result = await pool.request()
-        .input('fname', user.fname)
-        .input('lname', user.lname)
-        .input('username', user.username)
-        .input('email', user.email)
-        .input('password', hashedPwd)
-        .execute('createuser');
+      const pool = await sql.connect(conn);
+      const result = await pool.request().input('username', sql.VarChar, username).query('SELECT * FROM Users WHERE Username = @username');
+      if (result.recordset.length > 0) {
+        return res.status(400).json({ message: "User already exists" });
+      }
 
-      await sendMail(user.email);
-      return res.status(201).send({ message: 'Signup successful' });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).send({ message: 'Server error' });
+      const salt = bcrypt.genSaltSync(10);
+      const PasswordHash = bcrypt.hashSync(password, salt);
+
+      await pool.request()
+        .input('username', sql.VarChar, username)
+        .input('email', sql.VarChar, email)
+        .input('passwordHash', sql.VarChar, PasswordHash)
+        .query('INSERT INTO Users (Username, Email, PasswordHash) VALUES (@username, @email, @passwordHash)');
+
+      return res.status(201).json({ message: "User created successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: error.message });
     }
   },
 
   changepassword: async (req, res) => {
-    const { username, newpassword } = req.body;
+    const { email, oldPassword, newPassword } = req.body;
 
     try {
-      const pool = await sql.connect(config);
-      const result = await pool.request()
-        .input('username', username)
-        .query('SELECT userid, email, username, password FROM users WHERE username = @username');
-
-      if (result.recordset.length === 0) {
-        return res.status(400).json({ message: "User not found" });
-      }
-
+      const pool = await sql.connect(conn);
+      const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE Email = @email');
       const user = result.recordset[0];
-      const validPassword = await bcrypt.compare(newpassword, user.password);
 
-      if (validPassword) {
-        const hashedNewPwd = await bcrypt.hash(newpassword, 8);
-        await pool.request()
-          .input('password', hashedNewPwd)
-          .input('userid', user.userid)
-          .query('UPDATE users SET password = @password WHERE userid = @userid');
-
-        return res.status(200).json({ message: "Password changed successfully" });
-      } else {
-        return res.status(400).json({ message: "Invalid password" });
+      if (!user) {
+        return res.status(400).json({ message: "Email not found" });
       }
+
+      const isMatch = bcrypt.compareSync(oldPassword, user.PasswordHash);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid old password" });
+      }
+
+      const salt = bcrypt.genSaltSync(10);
+      const newHash = bcrypt.hashSync(newPassword, salt);
+
+      await pool.request()
+        .input('email', sql.VarChar, email)
+        .input('newHash', sql.VarChar, newHash)
+        .query('UPDATE Users SET PasswordHash = @newHash WHERE Email = @email');
+
+      return res.status(200).json({ message: "Password changed successfully" });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ message: "Error processing request" });
+      return res.status(500).json({ message: "Server error" });
     }
   }
 };
+
+// module.exports = {
+//   login: async (req, res) => {
+//     const { email, password } = req.body;
+  
+//     try {
+//       const pool =  sql.connect(conn);
+//       if (pool.connected) {
+//         const result = await pool.request().query`SELECT * FROM Users WHERE email = ${email}`;
+//         const user = result.recordset[0];
+  
+//         if (!user) {
+//           return res.status(400).json({ message: "Invalid username or password" });
+//         }
+  
+//         const isMatch = bcrypt.compareSync(password, user.PasswordHash);
+//         if (!isMatch) {
+//           return res.status(400).json({ message: "Invalid username or password" });
+//         }
+  
+        
+//         const token = jwt.sign({ userId: user.UserId, email: user.Email }, 'your_secret_key', {
+//           expiresIn: '1h', 
+//         });
+  
+       
+//         return res.status(200).json({
+//           message: "Login successful",
+//           token: token,  
+//           userId: user.UserId
+//         });
+//       } else {
+//         return res.status(500).json({ message: "Database connection failed" });
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "Server error" });
+//     }
+//   },
+
+//   signup: async (req, res) => {
+//       const { username, email, password } = req.body;
+//       try {
+//         const pool =sql.connect(conn);
+//         if (pool.connected) {
+//           const user = await pool.request().query`SELECT * FROM Users WHERE Username = ${username}`;
+//           if (user.recordset.length > 0) {
+//             return res.status(400).json({ message: "User already exists" });
+//           } else {
+//             const salt = bcrypt.genSaltSync(10);
+//             const PasswordHash = bcrypt.hashSync(password, salt);
+    
+//             await pool.request().query`INSERT INTO Users (Username, Email, PasswordHash) VALUES (${username}, ${email}, ${PasswordHash})`;
+//             return res.status(201).json({ message: "User created successfully" });
+//           }
+//         } else {
+//           return res.status(500).json({ message: "Database connection failed" });
+//         }
+//       } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: error.message });
+//       }
+//     },
+
+//   changepassword: async (req, res) => {
+//     const { email } = req.body;
+  
+//     try {
+//       const result = await sql.query`SELECT * FROM Users WHERE Email = ${email}`;
+//       const user = result.recordset[0];
+  
+//       if (!user) {
+//         return res.status(400).json({ message: "Email not found" });
+//       }
+  
+//       const resetToken = "123456"; 
+  
+//       res.status(200).json({ message: "Reset link sent to your email address" });
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).json({ message: "Server error" });
+//     }
+//   }}
