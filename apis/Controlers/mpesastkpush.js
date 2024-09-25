@@ -1,14 +1,10 @@
 
 const axios = require("axios");
 
-module.exports = {
-tokeGen: async(req,res)=>{}
-}
+
 
 const withToken = (handler) => async (req, res) => {
   try {
-    const secret = "KLv17YGOKo6wfpwcgSftVaWf7S5050qryMzebvMermhrLH5sNgzS4dQKqso3e8sj";
-    const consumer = "9fcJ133gY77oJuFazzRYaTdYvC7WQIlunrSviTjvdTQEvhUG";
     const auth = Buffer.from(`${consumer}:${secret}`).toString("base64");
 
     // Get token from Safaricom OAuth
