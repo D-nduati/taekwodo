@@ -18,6 +18,11 @@ export default defineConfig({
       component: '@/pages/components/LandingPage/Land',
     },
     {
+      path: '/admin',
+      component: '@/pages/components/admin/Admin.jsx'
+
+    },
+    {
       path: '/dashboard',
       component: '@/pages/components/Dashboard/Dashboard',
       routes: [

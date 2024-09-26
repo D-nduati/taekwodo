@@ -25,12 +25,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, children }) => {
           mode="inline"
           defaultSelectedKeys={['1']}
         >
-          <Menu.Item key="4">
-            <Image 
-            width={'50%'}
-            height={'50%'}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
-          </Menu.Item>
           <Menu.Item key="1" icon={<HomeOutlined />}>
             <Link to="/dashboard/home">Home</Link>
           </Menu.Item>

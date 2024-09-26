@@ -2,9 +2,9 @@ const axios = require('axios');
 const fetch = require('node-fetch');
 
 const mpesaConfig = {
-  consumerKey: 'YF4EgQAsWmmvs0QAGY7uK6sv35addUCpIKihEE6vKh5DOUXI',
-  consumerSecret: '96INUwdJwiYZ5hzZNjwwe28lRnbhH29neRVpaSeCQ2iNQpcGF6JviGUbl0GHt7fW',
-  passkey: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919',
+  consumerKey: '',
+  consumerSecret: '',
+  passkey: '',
   shortcode: '174379',
   url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
   stkUrl: 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
@@ -31,13 +31,13 @@ const generateToken = async () => {
 const stkPush = async (req, res) => {
   try {
     console.log('STK push request received...');
-    console.log('Request body:', req.body);
+    // console.log('Request body:', req.body);
     const token = await generateToken();
     console.log('Generated token:here is where reached', token);
     const phone = req.body.phone;
     const amount = req.body.amount || 1;
     const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, -5);
-    console.log('Timestamp:this is the timestamp', timestamp);
+    // console.log('Timestamp:this is the timestamp', timestamp);
     const password = Buffer.from(`${mpesaConfig.shortcode}${mpesaConfig.passkey}${timestamp}`).toString('base64');
     console.log('Password: now the password is generated dn', password);
     const data = {
@@ -53,7 +53,7 @@ const stkPush = async (req, res) => {
       AccountReference: 'Mpesa Test',
       TransactionDesc: 'Testing stk push',
     };
-    console.log('STK push data the data now to be sent is this dn:', data);
+    // console.log('STK push data the data now to be sent is this dn:', data);
     const response = await fetch(mpesaConfig.stkUrl, {
       method: 'POST',
       headers: {
