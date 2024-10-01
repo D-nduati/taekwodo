@@ -1,8 +1,8 @@
 const express = require("express");
-const mpesaRoute = express.Router()
+const router = express.Router()
 
-const { stkPush} = require("../Controlers/mpesastkpush")
+const {createToken, stkPush} = require("../Controlers/token")
 
-mpesaRoute.post("/stkpush",stkPush)  
+router.post("/",createToken, stkPush)  
 
-module.exports={mpesaRoute};
+module.exports=router;
