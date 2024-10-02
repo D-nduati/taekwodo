@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Layout, Tabs,List, Table, Button, Form, Input, Modal, Upload, message, Card, Statistic, Row, Col } from 'antd';
 import { UserOutlined, VideoCameraOutlined, CalendarOutlined, BarChartOutlined, UploadOutlined } from '@ant-design/icons';
-import './AdminPanel.css';
+// import './AdminPanel.css';
 import { RcFile, UploadChangeParam } from 'antd/lib/upload';
 
 const { Content, Header } = Layout;
@@ -18,7 +18,7 @@ const initialEvents = [
   { key: '2', event: 'Sparring Tournament', date: '2024-10-15', status: 'Completed' },
 ];
 
-const AdminPanel:React.FC = () => {
+const Admin:React.FC = () => {
   const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);  // Explicitly type as string[]
   const [users, setUsers] = useState(initialUsers);
   const [events, setEvents] = useState(initialEvents);
@@ -240,4 +240,4 @@ const AdminPanel:React.FC = () => {
   );
 };
 
-export default AdminPanel;
+export default Admin;

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Layout, Row, Col, Card, Typography, Button, Avatar, Image } from 'antd';
 import { UserOutlined, CheckCircleOutlined, RocketOutlined, StarOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import { Link } from 'umi';
+
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -12,6 +14,7 @@ function Landing() {
   useEffect(() => {
     setWelcomeMessage('Welcome to Taekwondo Pro!');
   }, []);
+
 
   return (
     <Layout style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
@@ -140,9 +143,11 @@ function Landing() {
           }}
         >
           <Title style={{ color: '#fff', marginBottom: '20px' }}>Start Your Taekwondo Journey Today!</Title>
+          <Link to ='/login'>
           <Button size="large" type="primary" style={{ backgroundColor: '#ff7f50', borderColor: '#ff7f50' }}>
             Sign Up Now
           </Button>
+          </Link>
         </div>
       </Content>
     </Layout>

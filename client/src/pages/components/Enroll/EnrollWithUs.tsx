@@ -50,19 +50,41 @@ const PricingComponent: React.FC = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (!phoneNumber) {
       message.error('Please enter a valid phone number!');
-    } 
-    else if(phoneNumber.length<9 || phoneNumber.length>10){
-      message.error('Phone number must be at least 10 digits long! Not long or shorter');
-    }
-    else {
-      message.success(`Payment initiated for the ${selectedPlan}. Thank you!`);
-      setIsModalVisible(false);
-      setPhoneNumber('');
+    } else if (phoneNumber.length < 9 || phoneNumber.length > 10) {
+      message.error('Phone number must be at least 10 digits long!');
+    } else {
+      const selectedPlanData = pricingData.find(plan => plan.title === selectedPlan);
+      const amount = selectedPlanData ? parseInt(selectedPlanData.price.replace('KES ', '')) : 0;
+  
+      try {
+        const response = await fetch('http://localhost:5000/token/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount,
+            phone: phoneNumber,
+          }),
+        });
+  
+        if (response.ok) {
+          message.success(`Payment initiated for the ${selectedPlan}. Thank you!`);
+          setIsModalVisible(false);
+          setPhoneNumber('');
+        } else {
+          const errorData = await response.json();
+          message.error(`Payment failed: ${errorData.message}`);
+        }
+      } catch (error:any) {
+        message.error(`Error initiating payment: ${error.message}`);
+      }
     }
   };
+  
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -135,81 +157,4 @@ const PricingComponent: React.FC = () => {
 
 export default PricingComponent;
 
-// import React from 'react';
-// import { Card, Button, Col, Row, Typography } from 'antd';
-// import { CheckOutlined } from '@ant-design/icons';
 
-// const { Title, Text } = Typography;
-
-// const pricingData = [
-//   {
-//     title: 'Basic Plan',
-//     price: 'KES 500',
-//     features: ['Feature 1', 'Feature 2', 'Feature 3'],
-//     backgroundColor: '#FFDEE9',
-//     borderColor: '#D4A5A5',
-//   },
-//   {
-//     title: 'Standard Plan',
-//     price: 'KES 1000',
-//     features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4'],
-//     backgroundColor: '#D4FC79',
-//     borderColor: '#96E6A1',
-//   },
-//   {
-//     title: 'Premium Plan',
-//     price: 'KES 2000',
-//     features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4', 'Feature 5'],
-//     backgroundColor: '#B6CEE8',
-//     borderColor: '#719ECE',
-//   },
-// ];
-
-// const PricingComponent: React.FC = () => {
-//   return (
-//     <Row gutter={[16, 16]} justify="center" style={{ padding: '20px' }}>
-//       {pricingData.map((plan, index) => (
-//         <Col key={index} xs={24} sm={12} md={8}>
-//           <Card
-//             title={<Title level={3} style={{ color: '#333' }}>{plan.title}</Title>}
-//             bordered={false}
-//             style={{
-//               background: `linear-gradient(135deg, ${plan.backgroundColor} 30%, ${plan.borderColor} 90%)`,
-//               borderRadius: '10px',
-//               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-//               textAlign: 'center',
-//               transition: 'transform 0.3s ease',
-//             }}
-//             hoverable
-//           >
-//             <Title level={2} style={{ color: '#222' }}>{plan.price}</Title>
-//             <ul style={{ listStyleType: 'none', padding: 0 }}>
-//               {plan.features.map((feature, i) => (
-//                 <li key={i} style={{ margin: '10px 0', color: '#555' }}>
-//                   <CheckOutlined style={{ color: '#52c41a', marginRight: '8px' }} />
-//                   <Text>{feature}</Text>
-//                 </li>
-//               ))}
-//             </ul>
-//             <Button
-//               type="primary"
-//               block
-//               style={{
-//                 backgroundColor: '#1890ff',
-//                 borderColor: '#1890ff',
-//                 borderRadius: '5px',
-//                 fontWeight: 'bold',
-//                 height: '50px',
-//                 fontSize: '16px',
-//               }}
-//             >
-//               Pay with MPesa
-//             </Button>
-//           </Card>
-//         </Col>
-//       ))}
-//     </Row>
-//   );
-// };
-
-// export default PricingComponent;

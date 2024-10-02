@@ -1,32 +1,20 @@
-const express = require('express');
 const bcrypt =  require('bcryptjs')
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 const jwt = require('jsonwebtoken');
 
 
-var config = {
- 
-  server: 'DESKTOP-5TSB55R\\SQLEXPRESS',
-  database: 'Taekwondo',
-  options: {
-      trustedConnection: true,
-      connectionTimeout: 30000
-  }
+
+
+const config = {
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
-
-var conn = new sql.ConnectionPool(config);
-conn.connect(function(err) {
-  if (err) console.log(err);
-});
-
-
 
 module.exports = {
   login: async (req, res) => {
     const { email, password } = req.body;
 
     try {
-      const pool = await sql.connect(conn);
+      const pool = await sql.connect(config);
       const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE email = @email');
       const user = result.recordset[0];
 
@@ -58,7 +46,7 @@ module.exports = {
     const { username, email, password } = req.body;
 
     try {
-      const pool = await sql.connect(conn);
+      const pool = await sql.connect(config);
       const result = await pool.request().input('username', sql.VarChar, username).query('SELECT * FROM Users WHERE Username = @username');
       if (result.recordset.length > 0) {
         return res.status(400).json({ message: "User already exists" });
@@ -84,7 +72,7 @@ module.exports = {
     const { email, oldPassword, newPassword } = req.body;
 
     try {
-      const pool = await sql.connect(conn);
+      const pool = await sql.connect(config);
       const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE Email = @email');
       const user = result.recordset[0];
 

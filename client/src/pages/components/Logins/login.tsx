@@ -30,13 +30,13 @@ function AuthForm() {
       let url = '';
       switch (formType) {
         case FormType.LOGIN:
-          url = 'http://localhost:4000/login';
+          url = 'http://localhost:5000/user/login';
           break;
         case FormType.SIGNUP:
-          url = 'http://localhost:4000/signup';
+          url = 'http://localhost:5000/user/signup';
           break;
         case FormType.FORGOT_PASSWORD:
-          url = 'http://localhost:4000/forgot-password';
+          url = 'http://localhost:5000/user/forgot-password';
           break;
         default:
           throw new Error('Invalid form type');

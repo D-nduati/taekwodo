@@ -8,7 +8,7 @@ require("dotenv").config();
 
 
 // const authMiddleware = require('./middleware/authMiddleware')
-// const {usersroute} = require('./Routes/Logins')
+const {usersroute} = require('./Routes/Logins')
 app.use(express.json());
 app.use(cors());
 
@@ -29,6 +29,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 // });
 
 app.use("/token", TokenRoute);
+app.use("/user",usersroute);
+
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message });

@@ -7,7 +7,7 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      redirect: '/login', // Redirect root to the login page
+      redirect: '/land', 
     },
     {
       path: '/login',
@@ -19,7 +19,7 @@ export default defineConfig({
     },
     {
       path: '/admin',
-      component: '@/pages/components/admin/Admin.jsx'
+      component: '@/pages/components/admin/Admin'
 
     },
     {
