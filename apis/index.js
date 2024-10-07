@@ -5,12 +5,12 @@ const TokenRoute = require("./Routes/token")
 
 const app = express();
 require("dotenv").config();
-
-
-// const authMiddleware = require('./middleware/authMiddleware')
-const {usersroute} = require('./Routes/Logins')
 app.use(express.json());
 app.use(cors());
+
+
+const {usersroute} = require('./Routes/Logins')
+// const {authMiddleware} = require('./middleware/authMiddleware')
 
 
 // Connect to MongoDB database
@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 
-// app.get("/protected", authMiddleware, (req, res) => {
+// app.use("/protected", authMiddleware, (req, res) => {
 //   res.json({ message: "You are authorized", user: req.user });
 // });
 
