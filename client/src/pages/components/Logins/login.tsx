@@ -60,7 +60,7 @@ function AuthForm() {
         message.error(`${formType.charAt(0).toUpperCase() + formType.slice(1)} failed. Please try again.`);
       }
       console.error('Error posting form data:', err);
-
+message.error(err)
     } finally {
       setLoading(false);
     }
@@ -77,15 +77,14 @@ function AuthForm() {
   };
 
   return (
-    <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'linear-gradient(to right, #ff7e5f, #feb47b)' }}>
+    <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'RGB(170 187 204)' }}>
       <animated.div style={fadeIn}>
         <Card
           style={{
-            maxWidth: 400,
+            maxWidth: '100%',
             borderRadius: '10px',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            padding: '20px',
-            background: 'white',
+            background: 'RGB(170 187 204)',
             overflow: 'hidden',
           }}
         >
@@ -140,7 +139,6 @@ function AuthForm() {
                   style={{
                     backgroundColor: '#ff7e5f',
                     borderColor: '#ff7e5f',
-                    padding: '10px 20px',
                     fontSize: '16px',
                     transition: 'all 0.3s ease-in-out',
                     width: '100%',

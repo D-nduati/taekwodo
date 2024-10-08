@@ -31,6 +31,7 @@ function Landing() {
         <Text style={{ fontSize: '18px', marginBottom: '20px', display: 'block' }}>
           Track your progress, learn new techniques, and stay connected with the Taekwondo community.
         </Text>
+        <Link to= '/login'>
         <Button
           size="large"
           type="primary"
@@ -38,6 +39,7 @@ function Landing() {
         >
           Try For Free
         </Button>
+        </Link>
       </div>
 
       {/* Features Section */}
@@ -130,8 +132,6 @@ function Landing() {
             </Card>
           </Col>
         </Row>
-
-        {/* Call to Action Section */}
         <div
           style={{
             background: 'linear-gradient(90deg, #0072ff, #00c6ff)',
