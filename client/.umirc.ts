@@ -34,7 +34,7 @@ export default defineConfig({
         { path: '/dashboard/members', component: '@/pages/components/Members/Members' },
         { path: '/dashboard/settings', component: '@/pages/components/Settings/Settings' },
         { path: '/dashboard/enroll', component: '@/pages/components/Enroll/EnrollWithUs' },
-        // { path: '/dashboard/home', component: '@/pages/components/Home/Home' }, // Example Home component
+         { path: '/dashboard/home', component: '@/pages/components/Home/Home' }, 
       ],
     },
   ],
