@@ -1,80 +1,112 @@
-// UserManagement.tsx
-import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Form, Input, Modal, message } from 'antd';
+import axios from 'axios';
 
-const initialUsers = [
-  { key: '1', name: 'John Doe', role: 'Instructor', email: 'john@example.com' },
-  { key: '2', name: 'Jane Smith', role: 'Student', email: 'jane@example.com' },
-];
+interface User {
+  UserId: number;
+  Username: string;
+  Email: string;
+  CreatedAt: string;
+}
 
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState<User[]>([]); 
   const [isUserModalVisible, setIsUserModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleDeleteUser = (key: string) => {
-    setUsers(users.filter(user => user.key !== key));
-    message.success('User deleted successfully');
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get<User[]>('http://localhost:5000/admin/getusers'); 
+      setUsers(response.data);
+    } catch (error) {
+      message.error('Failed to fetch users');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddUser = (values: any) => {
-    const newUser = {
-      key: Math.random().toString(36).substr(2, 9),
-      name: values.name,
-      role: values.role,
-      email: values.email,
-    };
-    setUsers([...users, newUser]);
-    setIsUserModalVisible(false);
-    message.success('User added successfully');
+  interface AddUserFormValues {
+    username: string;
+    email: string;
+    password: string;
+  }
+
+  const handleAddUser = async (values: AddUserFormValues) => {
+    try {
+      await axios.post('http://localhost:5000/admin/createNewUser', {
+        username: values.username,
+        email: values.email,
+        password: values.password, 
+      });
+      message.success('User added successfully');
+      setIsUserModalVisible(false);
+      fetchUsers(); 
+    } catch (error) {
+      message.error('Failed to add user');
+    }
   };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await axios.delete(`http://localhost:5000/admin/deleteUser${userId}`);
+      message.success('User deleted successfully');
+      fetchUsers(); 
+    } catch (error) {
+      message.error('Failed to delete user');
+    }
+  };
+
+  const userColumns = [
+    { title: 'Name', dataIndex: 'Username', key: 'username' },
+    { title: 'Email', dataIndex: 'Email', key: 'email' },
+    { title: 'Created At', dataIndex: 'CreatedAt', key: 'createdAt' },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_: any, record: User) => (
+        <Button type="link" danger onClick={() => handleDeleteUser(record.UserId)}>
+          Delete
+        </Button>
+      ),
+    },
+  ];
 
   return (
-    <>
-      <Table
-        dataSource={users}
-        columns={[
-          { title: 'Name', dataIndex: 'name', key: 'name' },
-          { title: 'Role', dataIndex: 'role', key: 'role' },
-          { title: 'Email', dataIndex: 'email', key: 'email' },
-          {
-            title: 'Action',
-            key: 'action',
-            render: (_, record) => (
-              <Button type="link" danger onClick={() => handleDeleteUser(record.key)}>
-                Delete
-              </Button>
-            ),
-          },
-        ]}
-        title={() => (
-          <Button type="primary" onClick={() => setIsUserModalVisible(true)}>
-            Add User
-          </Button>
-        )}
-      />
+    <div>
+      <Button type="primary" onClick={() => setIsUserModalVisible(true)} style={{ marginBottom: 16 }}>
+        Add User
+      </Button>
 
+      <Table columns={userColumns} dataSource={users} rowKey="UserId" loading={loading} />
+
+   
       <Modal
         title="Add New User"
-        visible={isUserModalVisible}
+        open={isUserModalVisible}
         onCancel={() => setIsUserModalVisible(false)}
         footer={null}
       >
         <Form layout="vertical" onFinish={handleAddUser}>
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter a name' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="role" label="Role" rules={[{ required: true, message: 'Please select a role' }]}>
+          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please enter a username' }]}>
             <Input />
           </Form.Item>
           <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please enter a valid email' }]}>
             <Input />
+          </Form.Item>
+          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Please enter a password' }]}>
+            <Input.Password />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>
             Add User
           </Button>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -1,26 +1,60 @@
-// EventManagement.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Input, message } from 'antd';
+import axios from 'axios';
 
-const initialEvents = [
-  { key: '1', event: 'Belt Test', date: '2024-09-10', status: 'Scheduled' },
-  { key: '2', event: 'Sparring Tournament', date: '2024-10-15', status: 'Completed' },
-];
+
+interface Event {
+  id: string; 
+  eventName: string;
+  eventDate: string;
+  status: string;
+}
 
 const EventManagement: React.FC = () => {
-  const [events, setEvents] = useState(initialEvents);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleAddEvent = (values: any) => {
-    const newEvent = {
-      key: Math.random().toString(36).substr(2, 9),
-      event: values.event,
-      date: values.date,
-      status: 'Scheduled',
-    };
-    setEvents([...events, newEvent]);
-    setIsEventModalVisible(false);
-    message.success('Event added successfully');
+ 
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get<Event[]>('http://localhost:5000/admin/getevents');
+      setEvents(response.data);
+    } catch (error) {
+      message.error('Failed to fetch events');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddEvent = async (values: any) => {
+    try {
+      await axios.post('http://localhost:5000/admin/createEvents', {
+        eventName: values.event,
+        eventDate: values.date,
+      });
+      message.success('Event added successfully');
+      setIsEventModalVisible(false);
+      fetchEvents(); 
+    } catch (error) {
+      message.error('Failed to add event');
+    }
+  };
+
+  
+  const handleDeleteEvent = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/admin/deleteEvents/${id}`);
+      message.success('Event deleted successfully');
+      fetchEvents(); 
+    } catch (error) {
+      message.error('Failed to delete event');
+    }
   };
 
   return (
@@ -28,20 +62,30 @@ const EventManagement: React.FC = () => {
       <Table
         dataSource={events}
         columns={[
-          { title: 'Event', dataIndex: 'event', key: 'event' },
-          { title: 'Date', dataIndex: 'date', key: 'date' },
+          { title: 'Event', dataIndex: 'eventName', key: 'eventName' },
+          { title: 'Date', dataIndex: 'eventDate', key: 'eventDate' },
           { title: 'Status', dataIndex: 'status', key: 'status' },
+          {
+            title: 'Action',
+            key: 'action',
+            render: (_, record: Event) => (
+              <Button type="link" danger onClick={() => handleDeleteEvent(record.id)}>
+                Delete
+              </Button>
+            ),
+          },
         ]}
         title={() => (
           <Button type="primary" onClick={() => setIsEventModalVisible(true)}>
             Add Event
           </Button>
         )}
+        loading={loading}
       />
 
       <Modal
         title="Add New Event"
-        visible={isEventModalVisible}
+        open={isEventModalVisible}
         onCancel={() => setIsEventModalVisible(false)}
         footer={null}
       >
@@ -50,7 +94,7 @@ const EventManagement: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item name="date" label="Date" rules={[{ required: true, message: 'Please select a date' }]}>
-            <Input />
+            <Input type="date" />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>
             Add Event
