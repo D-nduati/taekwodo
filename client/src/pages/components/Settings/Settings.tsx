@@ -1,25 +1,38 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Switch, Upload, Avatar, Row, Col, message, Modal, Select, Typography } from 'antd';
-import { EditOutlined,UploadOutlined} from '@ant-design/icons';
+import { EditOutlined, UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';  
 import './Settings.css';
 
 const { Option } = Select;
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 const Settings: React.FC = () => {
   const [form] = Form.useForm();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>('/default-avatar.png'); // Pre-set a default avatar
+  const [avatarUrl, setAvatarUrl] = useState<string | null>('/default-avatar.png'); 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Handle avatar upload via modal
-  const handleAvatarUpload = (info: any) => {
+  
+  const handleAvatarUpload = async (info: any) => {
     if (info.file.status === 'done') {
-      setAvatarUrl(URL.createObjectURL(info.file.originFileObj));
-      message.success('Avatar updated successfully');
+      try {
+        const formData = new FormData();
+        formData.append('avatar', info.file.originFileObj);
+        const response = await axios.post('/api/user/avatar', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        setAvatarUrl(response.data.avatarUrl);  
+        message.success('Avatar updated successfully');
+      } catch (error) {
+        message.error('Error uploading avatar');
+      }
     }
   };
 
-  // Modal logic for avatar change
+ 
   const showAvatarModal = () => setIsModalVisible(true);
   const handleAvatarChange = () => {
     message.success('Avatar changed successfully!');
@@ -27,10 +40,14 @@ const Settings: React.FC = () => {
   };
   const handleCancelModal = () => setIsModalVisible(false);
 
-  // Handle form submit
-  const handleFormSubmit = (values: any) => {
-    console.log('Form values:', values);
-    message.success('Settings updated');
+  
+  const handleFormSubmit = async (values: any) => {
+    try {
+      await axios.put('/api/user/settings', values);
+      message.success('Settings updated');
+    } catch (error) {
+      message.error('Error updating settings');
+    }
   };
 
   return (
@@ -41,7 +58,7 @@ const Settings: React.FC = () => {
             <Paragraph>Manage your profile, security, and preferences.</Paragraph>
           </div>
 
-          {/* Profile Picture Section */}
+          
           <div className="profile-section">
             <div className="avatar-wrapper" onClick={showAvatarModal}>
               <Avatar size={120} src={avatarUrl} className="avatar-img" />
@@ -71,7 +88,7 @@ const Settings: React.FC = () => {
             </Upload>
           </Modal>
 
-          {/* Settings Form */}
+         
           <Form
             form={form}
             layout="vertical"
@@ -86,7 +103,7 @@ const Settings: React.FC = () => {
             }}
             className="settings-form"
           >
-            {/* Username & Email */}
+          
             <Form.Item name="username" label="Username">
               <Input />
             </Form.Item>
@@ -99,7 +116,7 @@ const Settings: React.FC = () => {
               <Input.Password placeholder="Enter new password" />
             </Form.Item>
 
-            {/* Theme & Preferences */}
+          
             <Form.Item name="theme" label="App Theme">
               <Select>
                 <Option value="light">Light Mode</Option>
@@ -114,8 +131,6 @@ const Settings: React.FC = () => {
             <Form.Item name="receiveNotifications" label="Enable Push Notifications" valuePropName="checked">
               <Switch />
             </Form.Item>
-
-            {/* Security & 2FA */}
             <Form.Item name="twoFactorAuth" label="Two-Factor Authentication" valuePropName="checked">
               <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" />
             </Form.Item>

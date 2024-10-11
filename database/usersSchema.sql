@@ -66,3 +66,36 @@ CREATE TABLE Posts (
     CreatedAt DATETIME DEFAULT GETDATE()
 );
 
+CREATE TABLE Comments (
+  CommentID INT PRIMARY KEY IDENTITY,
+  PostID INT FOREIGN KEY REFERENCES Posts(PostID),
+  Author NVARCHAR(100),
+  Content NVARCHAR(MAX),
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+CREATE TABLE Likes (
+  LikeID INT PRIMARY KEY IDENTITY,
+  PostID INT FOREIGN KEY REFERENCES Posts(PostID),
+  LikedBy NVARCHAR(100),
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+CREATE TABLE UserSettings (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    Username NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100) NOT NULL,
+    PasswordHash NVARCHAR(256),
+    ReceiveEmails BIT DEFAULT 1,
+    ReceiveNotifications BIT DEFAULT 1,
+    Theme NVARCHAR(10) DEFAULT 'light',
+    TwoFactorAuth BIT DEFAULT 0, 
+    AvatarUrl NVARCHAR(256), 
+    CreatedAt DATETIME DEFAULT GETDATE(), 
+    UpdatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+

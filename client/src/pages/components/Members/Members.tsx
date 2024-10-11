@@ -30,11 +30,7 @@ const Members: React.FC = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('http://localhost:5000/members/getposts');
-        const postsWithTimestamp = response.data.map((post: any) => ({
-          ...post,
-          timestamp: moment(post.CreatedAt).toISOString(), 
-        }));
-        setPosts(postsWithTimestamp);
+        setPosts(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -43,32 +39,45 @@ const Members: React.FC = () => {
     fetchPosts();
   }, []);
   
-
   
+
   const handleLikePost = async (postId: string) => {
     const updatedPosts = posts.map(post =>
       post.id === postId ? { ...post, likes: post.likes + 1 } : post
     );
     setPosts(updatedPosts);
-
-   
-    await axios.put(`/api/posts/${postId}`, { likes: updatedPosts.find(p => p.id === postId)?.likes });
-  };
-
   
-  const handleAddComment = (postId: string) => {
-    if (newCommentContent[postId]) {
-      setPosts(prevPosts =>
-        prevPosts.map(post =>
-          post.id === postId
-            ? { ...post, comments: [...post.comments, { author: 'You', content: newCommentContent[postId] }] }
-            : post
-        )
-      );
-      setNewCommentContent({ ...newCommentContent, [postId]: '' });
+    try {
+      await axios.put(`http://localhost:5000/members/likePost${postId}/like`, { likedBy: 'You' });
+    } catch (error) {
+      console.error('Error liking post:', error);
     }
   };
+  
 
+  
+  const handleAddComment = async (postId: string) => {
+    if (newCommentContent[postId]) {
+      try {
+        await axios.post(`http://localhost:5000/members//addComment/${postId}/comment`, {
+          author: 'You',
+          content: newCommentContent[postId],
+        });
+  
+        setPosts(prevPosts =>
+          prevPosts.map(post =>
+            post.id === postId
+              ? { ...post, comments: [...post.comments, { author: 'You', content: newCommentContent[postId] }] }
+              : post
+          )
+        );
+        setNewCommentContent({ ...newCommentContent, [postId]: '' });
+      } catch (error) {
+        console.error('Error adding comment:', error);
+      }
+    }
+  };
+  
   
   const handleCreatePost = async () => {
     if (newPostContent || imageFile || videoFile) {
