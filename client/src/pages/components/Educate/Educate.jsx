@@ -10,7 +10,7 @@ const EducationModule = () => {
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/videos'); // Fetch all videos
+      const response = await axios.get('/api/videos');
       setVideos(response.data);
     } catch (error) {
       message.error('Error fetching videos. Please try again later.');
@@ -24,7 +24,7 @@ const EducationModule = () => {
     fetchVideos();
   }, []);
 
-  // Group videos by category
+ 
   const groupedVideos = videos.reduce((acc, video) => {
     (acc[video.category] = acc[video.category] || []).push(video);
     return acc;

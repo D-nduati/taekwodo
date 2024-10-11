@@ -18,7 +18,7 @@ CREATE TABLE Videos (
   title NVARCHAR(255) NOT NULL,
   description NVARCHAR(MAX),
   videoUrl NVARCHAR(255) NOT NULL,
-  category NVARCHAR(50) NOT NULL, -- New column for category
+  category NVARCHAR(50) NOT NULL, 
   createdAt DATETIME DEFAULT GETDATE()
 );
 
@@ -97,5 +97,65 @@ CREATE TABLE UserSettings (
     UpdatedAt DATETIME DEFAULT GETDATE()
 );
 
+
+CREATE TABLE Quizzes (
+  QuizID INT PRIMARY KEY IDENTITY(1,1),
+  Category VARCHAR(50),
+  Title VARCHAR(100),
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+CREATE TABLE Questions (
+  QuestionID INT PRIMARY KEY IDENTITY(1,1),
+  QuizID INT FOREIGN KEY REFERENCES Quizzes(QuizID),
+  QuestionText NVARCHAR(MAX),
+  CorrectAnswer INT,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+CREATE TABLE Options (
+  OptionID INT PRIMARY KEY IDENTITY(1,1),
+  QuestionID INT FOREIGN KEY REFERENCES Questions(QuestionID),
+  OptionText NVARCHAR(MAX),
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE UserQuizResults (
+  ResultID INT PRIMARY KEY IDENTITY(1,1),
+  UserID INT,
+  QuizID INT FOREIGN KEY REFERENCES Quizzes(QuizID),
+  Score INT,
+  TakenAt DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Quizzes (
+    QuizID INT PRIMARY KEY IDENTITY(1,1),
+    Category NVARCHAR(50),
+    Title NVARCHAR(255),
+    CreatedAt DATETIME DEFAULT GETDATE()
+  );
+  CREATE TABLE Questions (
+    QuestionID INT PRIMARY KEY IDENTITY(1,1),
+    QuizID INT FOREIGN KEY REFERENCES Quizzes(QuizID),
+    QuestionText NVARCHAR(255),
+    CorrectAnswer INT,
+    CreatedAt DATETIME DEFAULT GETDATE()
+  );
+  CREATE TABLE Options (
+    OptionID INT PRIMARY KEY IDENTITY(1,1),
+    QuestionID INT FOREIGN KEY REFERENCES Questions(QuestionID),
+    OptionText NVARCHAR(255)
+  );
+
+  CREATE TABLE UserScores (
+    UserID INT,
+    QuizID INT,
+    Score INT,
+    Rank INT,
+    PRIMARY KEY(UserID, QuizID),
+    FOREIGN KEY (QuizID) REFERENCES Quizzes(QuizID)
+  )
 
 
