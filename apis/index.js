@@ -11,6 +11,7 @@ app.use(cors());
 
 const {usersroute} = require('./Routes/Logins');
 const {adminRoutes} = require('./Routes/adminroutes');
+const { Membersroute } = require("./Routes/MembersRoutes");
 
 // const {authMiddleware} = require('./middleware/authMiddleware')
 
@@ -33,6 +34,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use("/token", TokenRoute);
 app.use("/user",usersroute);
 app.use('/admin',adminRoutes);
+app.use('/members',Membersroute)
 
 
 app.use((err, req, res, next) => {

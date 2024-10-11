@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Input, Button, Upload, List, Avatar, Comment, Tooltip } from 'antd';
 import { UploadOutlined, LikeOutlined, LikeFilled, MessageOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import axios from 'axios';
 
 const { TextArea } = Input;
 
@@ -13,48 +14,52 @@ interface Post {
   videoUrl?: string | null;
   likes: number;
   comments: { author: string; content: string }[];
-  timestamp: string;
+  timestamp: string; 
+  CreatedAt: string;
 }
 
 const Members: React.FC = () => {
-  // Mock posts data
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: '1',
-      author: 'John Doe',
-      content: 'This is my first post! Excited to be part of this amazing community 🎉.',
-      likes: 5,
-      comments: [{ author: 'Jane', content: 'Nice post! Keep it up 💪' }],
-      timestamp: moment().subtract(10, 'minutes').toISOString(),
-    },
-    {
-      id: '2',
-      author: 'Jane Smith',
-      content: 'Learning Taekwondo is so much fun! Feeling stronger every day 💥',
-      likes: 3,
-      comments: [{ author: 'John', content: 'Keep it up, you’re doing great! 👏' }],
-      timestamp: moment().subtract(30, 'minutes').toISOString(),
-    },
-  ]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [newCommentContent, setNewCommentContent] = useState<{ [key: string]: string }>({});
   const [imageFile, setImageFile] = useState<any | null>(null);
   const [videoFile, setVideoFile] = useState<any | null>(null);
 
-  // Handle like post
-  const handleLikePost = (postId: string) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.id === postId ? { ...post, likes: post.likes + 1 } : post
-      )
+  
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/members/getposts');
+        const postsWithTimestamp = response.data.map((post: any) => ({
+          ...post,
+          timestamp: moment(post.CreatedAt).toISOString(), 
+        }));
+        setPosts(postsWithTimestamp);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+  
+    fetchPosts();
+  }, []);
+  
+
+  
+  const handleLikePost = async (postId: string) => {
+    const updatedPosts = posts.map(post =>
+      post.id === postId ? { ...post, likes: post.likes + 1 } : post
     );
+    setPosts(updatedPosts);
+
+   
+    await axios.put(`/api/posts/${postId}`, { likes: updatedPosts.find(p => p.id === postId)?.likes });
   };
 
-  // Handle add comment
+  
   const handleAddComment = (postId: string) => {
     if (newCommentContent[postId]) {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
           post.id === postId
             ? { ...post, comments: [...post.comments, { author: 'You', content: newCommentContent[postId] }] }
             : post
@@ -64,24 +69,34 @@ const Members: React.FC = () => {
     }
   };
 
-  // Handle create post
-  const handleCreatePost = () => {
+  
+  const handleCreatePost = async () => {
     if (newPostContent || imageFile || videoFile) {
-      const newPost = {
-        id: Math.random().toString(36).substr(2, 9),
-        author: 'You',
-        content: newPostContent,
-        imageUrl: imageFile ? URL.createObjectURL(imageFile) : undefined,
-        videoUrl: videoFile ? URL.createObjectURL(videoFile) : undefined,
-        likes: 0,
-        comments: [],
-        timestamp: new Date().toISOString(),
-      };
+      const formData = new FormData();
+      formData.append('author', 'You');
+      formData.append('content', newPostContent);
+      if (imageFile) formData.append('image', imageFile);
+      if (videoFile) formData.append('video', videoFile);
 
-      setPosts([newPost, ...posts]);
-      setNewPostContent('');
-      setImageFile(null);
-      setVideoFile(null);
+      try {
+        const response = await axios.post('http://localhost:5000/members/createPost', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const newPost = {
+          ...response.data,
+          timestamp: new Date().toISOString(),
+        };
+
+        setPosts([newPost, ...posts]);
+        setNewPostContent('');
+        setImageFile(null);
+        setVideoFile(null);
+      } catch (error) {
+        console.error('Error creating post:', error);
+      }
     }
   };
 
@@ -91,19 +106,19 @@ const Members: React.FC = () => {
       const isVideo = file.type.startsWith('video/');
       if (isImage) setImageFile(file);
       if (isVideo) setVideoFile(file);
-      return false; // Prevent upload
+      return false; 
     },
   };
 
   return (
     <div style={{ padding: '20px', background: '#f4f7fb', minHeight: '100vh' }}>
-      {/* Post creation card */}
+      
       <Card
         title="Create a Post"
         bordered={false}
         style={{
           width: '65%',
-          margin:'auto',
+          margin: 'auto',
           marginBottom: '20px',
           borderRadius: '8px',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -141,7 +156,6 @@ const Members: React.FC = () => {
         </div>
       </Card>
 
-      
       <List
         dataSource={posts}
         renderItem={(post) => (
@@ -150,7 +164,7 @@ const Members: React.FC = () => {
             bordered={false}
             style={{
               width: '65%',
-              margin:'auto',
+              margin: 'auto',
               marginBottom: '20px',
               borderRadius: '8px',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -215,6 +229,4 @@ const Members: React.FC = () => {
 };
 
 export default Members;
-
-
 
