@@ -9,7 +9,9 @@ app.use(express.json());
 app.use(cors());
 
 
-const {usersroute} = require('./Routes/Logins')
+const {usersroute} = require('./Routes/Logins');
+const {adminRoutes} = require('./Routes/adminroutes');
+
 // const {authMiddleware} = require('./middleware/authMiddleware')
 
 
@@ -30,6 +32,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 app.use("/token", TokenRoute);
 app.use("/user",usersroute);
+app.use('/admin',adminRoutes);
 
 
 app.use((err, req, res, next) => {

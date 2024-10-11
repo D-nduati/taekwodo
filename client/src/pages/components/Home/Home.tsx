@@ -3,7 +3,7 @@ import Hero from './Hero';
 import Features from './Features';
 import AboutTaekwondo from './AboutTaekwondo';
 import CallToAction from './CallToAction';
-import './Home.css'
+import './HomePage.module.css'
 
 const Home: React.FC = () => {
   return (
