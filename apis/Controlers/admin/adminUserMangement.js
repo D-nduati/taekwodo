@@ -1,9 +1,9 @@
 const bcrypt =  require('bcryptjs')
-const sql = require('mssql/msnodesqlv8');
-const jwt = require('jsonwebtoken');
+const sql = require('mssql');
+const jwt = require("jsonwebtoken");
 
 const config = {
-  connectionString: 'Driver=SQL Server;Server="DESKTOP-5TSB55R\\SQLEXPRESS";Database=Taekwondo;Trusted_Connection=true;'
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
   module.exports = {
     GetAllUsers:async (req, res) => {
@@ -37,12 +37,27 @@ const config = {
     }
     },
 
-    DeleteUser: async (req, res) => {
-    const userId = req.params.id;
-    try {
-        const pool =  await sql.connect(config); ;
-        await pool.request().input('UserId', sql.Int, userId).query('DELETE FROM Users WHERE UserId = @UserId');
-        res.send('User deleted successfully');
+    DeleteUser: async (req, res) => {    
+     const {UserId} = req.body;
+    try {    
+        const pool = await sql.connect(config);       
+        if(pool.connected){
+          const result = await pool.request().input('UserId', sql.Int, UserId).query('DELETE FROM Users WHERE UserId = '+ UserId);
+          res.status(200).json(result.recordset);
+
+          console.log("CONNECTED TO DB AT DELETE USER STEP");
+          if (result.recordset[0]>0) {
+            res.send('User deleted successfully');
+          } else {
+            res.status(500).json(result)
+          }
+          res.status(200).json;
+          }else{
+          res.status(500).json({
+            message:"Failed to connect to the Database"
+          })
+         }
+       
       } catch (err) {
         res.status(500).send(err.message);
       }

@@ -68,7 +68,7 @@ CREATE TABLE Posts (
 
 CREATE TABLE Comments (
   CommentID INT PRIMARY KEY IDENTITY,
-  PostID INT FOREIGN KEY REFERENCES Posts(PostID),
+  Id UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Posts(Id),
   Author NVARCHAR(100),
   Content NVARCHAR(MAX),
   CreatedAt DATETIME DEFAULT GETDATE()
@@ -130,24 +130,6 @@ CREATE TABLE UserQuizResults (
   TakenAt DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE Quizzes (
-    QuizID INT PRIMARY KEY IDENTITY(1,1),
-    Category NVARCHAR(50),
-    Title NVARCHAR(255),
-    CreatedAt DATETIME DEFAULT GETDATE()
-  );
-  CREATE TABLE Questions (
-    QuestionID INT PRIMARY KEY IDENTITY(1,1),
-    QuizID INT FOREIGN KEY REFERENCES Quizzes(QuizID),
-    QuestionText NVARCHAR(255),
-    CorrectAnswer INT,
-    CreatedAt DATETIME DEFAULT GETDATE()
-  );
-  CREATE TABLE Options (
-    OptionID INT PRIMARY KEY IDENTITY(1,1),
-    QuestionID INT FOREIGN KEY REFERENCES Questions(QuestionID),
-    OptionText NVARCHAR(255)
-  );
 
   CREATE TABLE UserScores (
     UserID INT,

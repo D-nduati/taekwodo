@@ -1,13 +1,11 @@
 const bcrypt =  require('bcryptjs')
-const sql = require('mssql/msnodesqlv8');
+const sql = require('mssql/tedious');
 const jwt = require('jsonwebtoken');
-
-
-
 
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
+
 
 module.exports = {
   login: async (req, res) => {

@@ -9,20 +9,20 @@ module.exports = {
     try {
       const pool = await sql.connect(config);
       if (pool.connected) {
-        const postsQuery = `SELECT p.PostID, p.Author, p.Content, p.ImageUrl, p.VideoUrl, p.CreatedAt,
+        const postsQuery = `SELECT p.Id, p.Author, p.Content, p.ImageUrl, p.VideoUrl, p.CreatedAt,
                                    ISNULL(l.LikeCount, 0) AS Likes
                             FROM Posts p
-                            LEFT JOIN (SELECT PostID, COUNT(*) AS LikeCount FROM Likes GROUP BY PostID) l
-                            ON p.PostID = l.PostID`;
+                            LEFT JOIN (SELECT Id, COUNT(*) AS LikeCount FROM Likes GROUP BY Id) l
+                            ON p.Id = l.Id`;
 
         const posts = await pool.query(postsQuery);
 
-        const commentsQuery = `SELECT * FROM Comments WHERE PostID IN (SELECT PostID FROM Posts)`;
+        const commentsQuery = `SELECT * FROM Comments WHERE Id IN (SELECT Id FROM Posts)`;
         const comments = await pool.query(commentsQuery);
 
         const postsWithComments = posts.recordset.map(post => ({
           ...post,
-          comments: comments.recordset.filter(comment => comment.PostID === post.PostID),
+          comments: comments.recordset.filter(comment => comment.Id === post.Id),
         }));
 
         res.json(postsWithComments);
@@ -43,7 +43,7 @@ module.exports = {
       const result = await pool.query`
         INSERT INTO Posts (Author, Content, ImageUrl, VideoUrl, CreatedAt)
         VALUES (${author}, ${content}, ${imageUrl}, ${videoUrl}, GETDATE());
-        SELECT * FROM Posts WHERE PostID = SCOPE_IDENTITY();
+        SELECT * FROM Posts WHERE Id = SCOPE_IDENTITY();
       `;
 
       res.status(201).json(result.recordset[0]);
@@ -63,7 +63,7 @@ module.exports = {
         const result = await pool.query`
           UPDATE Posts 
           SET Content = ${content}, ImageUrl = ${imageUrl}, VideoUrl = ${videoUrl} 
-          WHERE PostID = ${id};
+          WHERE Id = ${id};
         `;
 
         if (result.rowsAffected[0] > 0) {
@@ -87,7 +87,7 @@ module.exports = {
       const pool = await sql.connect(config);
       await pool.query`
         DELETE FROM Posts
-        WHERE PostID = ${id};
+        WHERE Id = ${id};
       `;
 
       res.json({ status: 'ok', message: 'Successfully deleted post' });
@@ -98,14 +98,14 @@ module.exports = {
 
 
   LikePost: async (req, res) => {
-    const { postId } = req.params;
+    const { Id } = req.params;
     const { likedBy } = req.body;
 
     try {
       const pool = await sql.connect(config);
       const result = await pool.query`
-        INSERT INTO Likes (PostID, LikedBy, CreatedAt)
-        VALUES (${postId}, ${likedBy}, GETDATE());
+        INSERT INTO Likes (Id, LikedBy, CreatedAt)
+        VALUES (${Id}, ${likedBy}, GETDATE());
       `;
 
       res.json({ message: 'Post liked successfully' });
@@ -116,14 +116,14 @@ module.exports = {
 
  
   AddComment: async (req, res) => {
-    const { postId } = req.params;
+    const { Id } = req.params;
     const { author, content } = req.body;
 
     try {
       const pool = await sql.connect(config);
       const result = await pool.query`
-        INSERT INTO Comments (PostID, Author, Content, CreatedAt)
-        VALUES (${postId}, ${author}, ${content}, GETDATE());
+        INSERT INTO Comments (Id, Author, Content, CreatedAt)
+        VALUES (${Id}, ${author}, ${content}, GETDATE());
       `;
 
       res.json({ message: 'Comment added successfully' });

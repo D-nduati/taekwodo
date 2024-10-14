@@ -1,19 +1,4 @@
-const express = require('express');
 const sql = require('mssql');
-const router = express.Router();
-
-
-// const config = {
-//   user: 'your_username',
-//   password: 'your_password',
-//   server: 'your_server',
-//   database: 'your_database',
-//   options: {
-//     encrypt: true,
-//     trustServerCertificate: true,
-//   },
-// };
-
 const config = {
     connectionString: 'Driver=SQL Server;Server="DESKTOP-5TSB55R\\SQLEXPRESS";Database=Taekwondo;Trusted_Connection=true;'
   };

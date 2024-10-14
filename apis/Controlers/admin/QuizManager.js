@@ -1,5 +1,10 @@
+const sql = require('mssql');
 
-module.exports.CreateQuiz = async (req, res) => {
+const config = {
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
+};;
+module.exports ={
+  CreateQuiz : async (req, res) => {
     const { category, title } = req.body;
   
     try {
@@ -14,9 +19,8 @@ module.exports.CreateQuiz = async (req, res) => {
     } catch (err) {
       res.status(500).send(err.message);
     }
-  };
-
-  module.exports.AddQuestion = async (req, res) => {
+  },
+  AddQuestion :async (req, res) => {
     const { quizId, questionText, correctAnswer, options } = req.body;
   
     try {
@@ -30,7 +34,7 @@ module.exports.CreateQuiz = async (req, res) => {
   
       const question = questionResult.recordset[0];
   
-      // Insert options
+      
       for (const option of options) {
         await pool.query`
           INSERT INTO Options (QuestionID, OptionText)
@@ -42,9 +46,8 @@ module.exports.CreateQuiz = async (req, res) => {
     } catch (err) {
       res.status(500).send(err.message);
     }
-  };
-
-  module.exports.GetAllQuizzes = async (req, res) => {
+  },
+  GetAllQuizzes: async (req, res) => {
     try {
       const pool = await sql.connect(config);
       const result = await pool.query`
@@ -55,9 +58,8 @@ module.exports.CreateQuiz = async (req, res) => {
     } catch (err) {
       res.status(500).send(err.message);
     }
-  };
-
-  module.exports.GetQuizDetails = async (req, res) => {
+  },
+  GetQuizDetails: async (req, res) => {
     const { quizId } = req.params;
   
     try {
@@ -81,7 +83,9 @@ module.exports.CreateQuiz = async (req, res) => {
     } catch (err) {
       res.status(500).send(err.message);
     }
-  };
+  }
+
+};
   
   
   

@@ -1,9 +1,8 @@
-const sql = require("mssql");
+const sql = require('mssql');
 
 const config = {
-  connectionString:
-    "Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;",
-};
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
+};;
 
 module.exports = {
   GetAllEvents: async (req, res) => {

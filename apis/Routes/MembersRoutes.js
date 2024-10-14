@@ -1,9 +1,9 @@
 const express = require('express');
 const Membersroute = express.Router();
 
-const{ GetALLPosts,LikePost,AddComment,CreatePost,UpdatePost, DeletePost} = require('../Controlers/MembersController');
+const{ GetAllPosts,LikePost,AddComment,CreatePost,UpdatePost, DeletePost} = require('../Controlers/MembersController');
 
-Membersroute.get('/getposts', GetALLPosts);
+Membersroute.get('/getposts', GetAllPosts);
 Membersroute.post('/createPost',CreatePost);
 Membersroute.put('/updatePost/:id',UpdatePost);
 Membersroute.delete('/deletePost/:id',DeletePost);
