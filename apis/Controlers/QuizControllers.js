@@ -1,7 +1,7 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
 const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;;Database=Taekwondo;Trusted_Connection=true;',
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     const { category, title } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         INSERT INTO Quizzes (Category, Title) 
         VALUES (${category}, ${title});
@@ -26,7 +26,7 @@ module.exports = {
     const { quizID, questionText, correctAnswer, options } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const questionResult = await pool.query`
         INSERT INTO Questions (QuizID, QuestionText, CorrectAnswer)
         VALUES (${quizID}, ${questionText}, ${correctAnswer});
@@ -52,7 +52,7 @@ module.exports = {
     const { userID } = req.params;
     
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const userQuizResult = await pool.query`
         SELECT q.QuizID, q.Category, q.Title
         FROM Quizzes q
@@ -70,7 +70,7 @@ module.exports = {
     const { userID, quizID, score } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       await pool.query`
         INSERT INTO UserQuizResults (UserID, QuizID, Score)
         VALUES (${userID}, ${quizID}, ${score});
@@ -86,7 +86,7 @@ module.exports = {
     const { userID } = req.params;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const userRank = await pool.query`
         SELECT AVG(Score) as AverageScore 
         FROM UserQuizResults 

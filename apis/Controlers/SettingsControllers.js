@@ -1,7 +1,7 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
 const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;',
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
     const { userId } = req.params;  
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       if (pool.connected) {
         const result = await pool.query`
           SELECT * FROM UserSettings WHERE UserID = ${userId};
@@ -35,7 +35,7 @@ module.exports = {
     const { username, email, passwordHash, receiveEmails, receiveNotifications, theme, twoFactorAuth, avatarUrl } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         UPDATE UserSettings 
         SET Username = ${username}, 
@@ -66,7 +66,7 @@ module.exports = {
     const { avatarUrl } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         UPDATE UserSettings 
         SET AvatarUrl = ${avatarUrl}, UpdatedAt = GETDATE()
@@ -89,7 +89,7 @@ module.exports = {
     const { twoFactorAuth } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         UPDATE UserSettings 
         SET TwoFactorAuth = ${twoFactorAuth}, UpdatedAt = GETDATE()

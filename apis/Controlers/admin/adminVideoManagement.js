@@ -1,6 +1,7 @@
-const sql = require('mssql');
-const config = {
-    connectionString: 'Driver=SQL Server;Server="DESKTOP-5TSB55R\\SQLEXPRESS";Database=Taekwondo;Trusted_Connection=true;'
+  const sql = require('mssql/msnodesqlv8');
+
+  const config = {
+    connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
   };
 
 module.exports = {

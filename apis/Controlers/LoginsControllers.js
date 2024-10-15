@@ -1,7 +1,16 @@
 const bcrypt =  require('bcryptjs')
-const sql = require('mssql/tedious');
+const sql = require('mssql/msnodesqlv8');
 const jwt = require('jsonwebtoken');
 
+// const config = {
+//   server: "DESKTOP-5TSB55R\\SQLEXPRESS",
+//   Database:"Taekwondo",
+//   options: {
+//     trustedConnection: true, 
+//     trustServerCertificate: true, 
+//   },
+//   driver: "msnodesqlv8", 
+// };
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
@@ -13,6 +22,7 @@ module.exports = {
 
     try {
       const pool = await sql.connect(config);
+      console.log(pool)
       const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE email = @email');
       const user = result.recordset[0];
 
@@ -44,7 +54,7 @@ module.exports = {
     const { username, email, password } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = new sql.ConnectionPool(config);
       const result = await pool.request().input('username', sql.VarChar, username).query('SELECT * FROM Users WHERE Username = @username');
       if (result.recordset.length > 0) {
         return res.status(400).json({ message: "User already exists" });
@@ -70,7 +80,7 @@ module.exports = {
     const { email, oldPassword, newPassword } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = new sql.ConnectionPool(config);
       const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE Email = @email');
       const user = result.recordset[0];
 

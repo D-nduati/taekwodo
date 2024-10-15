@@ -1,13 +1,13 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
 const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;',
+  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
 
 module.exports = {
   GetAllPosts: async (req, res) => {
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       if (pool.connected) {
         const postsQuery = `SELECT p.Id, p.Author, p.Content, p.ImageUrl, p.VideoUrl, p.CreatedAt,
                                    ISNULL(l.LikeCount, 0) AS Likes
@@ -39,7 +39,7 @@ module.exports = {
     const { author, content, imageUrl, videoUrl } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         INSERT INTO Posts (Author, Content, ImageUrl, VideoUrl, CreatedAt)
         VALUES (${author}, ${content}, ${imageUrl}, ${videoUrl}, GETDATE());
@@ -58,7 +58,7 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       if (pool.connected) {
         const result = await pool.query`
           UPDATE Posts 
@@ -84,7 +84,7 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       await pool.query`
         DELETE FROM Posts
         WHERE Id = ${id};
@@ -102,7 +102,7 @@ module.exports = {
     const { likedBy } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         INSERT INTO Likes (Id, LikedBy, CreatedAt)
         VALUES (${Id}, ${likedBy}, GETDATE());
@@ -120,7 +120,7 @@ module.exports = {
     const { author, content } = req.body;
 
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         INSERT INTO Comments (Id, Author, Content, CreatedAt)
         VALUES (${Id}, ${author}, ${content}, GETDATE());

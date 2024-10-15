@@ -1,13 +1,13 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
-};;
+};
 
 module.exports = {
   GetAllEvents: async (req, res) => {
     try {
-      let pool = await sql.connect(config);
+      const pool = await sql.connect(config);
       let result = await pool.request().query("SELECT * FROM Events");
       res.json(result.recordset);
     } catch (err) {

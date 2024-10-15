@@ -1,14 +1,16 @@
-const sql = require('mssql');
+const sql = require('mssql/msnodesqlv8');
 
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
-};;
+};
+
+
 module.exports ={
   CreateQuiz : async (req, res) => {
     const { category, title } = req.body;
   
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         INSERT INTO Quizzes (Category, Title)
         VALUES (${category}, ${title});
@@ -24,7 +26,7 @@ module.exports ={
     const { quizId, questionText, correctAnswer, options } = req.body;
   
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
   
       const questionResult = await pool.query`
         INSERT INTO Questions (QuizID, QuestionText, CorrectAnswer)
@@ -49,7 +51,7 @@ module.exports ={
   },
   GetAllQuizzes: async (req, res) => {
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
       const result = await pool.query`
         SELECT * FROM Quizzes;
       `;
@@ -63,7 +65,7 @@ module.exports ={
     const { quizId } = req.params;
   
     try {
-      const pool = await sql.connect(config);
+   const pool = await sql.connect(config);
   
       const quizResult = await pool.query`
         SELECT * FROM Quizzes WHERE QuizID = ${quizId};
