@@ -10,7 +10,7 @@ const EducationModule = () => {
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/videos');
+      const response = await axios.get('http://localhost:5000/admin/getVideos');
       setVideos(response.data);
     } catch (error) {
       message.error('Error fetching videos. Please try again later.');

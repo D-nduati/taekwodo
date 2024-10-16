@@ -1,5 +1,5 @@
 const sql = require('mssql/msnodesqlv8');
-
+const { format } = require('date-fns');
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };
@@ -14,24 +14,27 @@ module.exports = {
       res.status(500).send(err.message);
     }
   },
+  
   NewEvent: async (req, res) => {
     const { eventName, eventDate } = req.body;
+    console.log(eventDate)
     try {
-      let pool = await sql.connect(config);
-      await pool
-        .request()
-        .input("eventName", sql.NVarChar, eventName)
-        .input("eventDate", sql.Date, eventDate)
-        .input("status", sql.NVarChar, "Scheduled")
-        .query(
-          "INSERT INTO Events (eventName, eventDate, status) VALUES (@eventName, @eventDate, @status)"
-        );
+        let pool = await sql.connect(config);
+        await pool
+            .request()
+            .input("eventName", sql.NVarChar, eventName)
+            .input("eventDate", sql.Date, eventDate)  
+            .input("status", sql.NVarChar, "Scheduled")
+            .query(
+                `INSERT INTO Events (eventName, eventDate, status) VALUES (@eventName, @eventDate, @status)`
+            );
 
-      res.status(201).send("Event added successfully");
+        res.status(201).send("Event added successfully");
     } catch (err) {
-      res.status(500).send(err.message);
+        res.status(500).send(err.message);
     }
-  },
+},
+
   DeleteEvent: async (req, res) => {
     const { id } = req.params;
     try {

@@ -33,16 +33,19 @@ const EventManagement: React.FC = () => {
   };
 
   const handleAddEvent = async (values: any) => {
+
+    console.log(values)
     try {
       await axios.post('http://localhost:5000/admin/createEvents', {
-        eventName: values.event,
-        eventDate: values.date,
+        eventName: values.eventName,
+        eventDate: values.eventDate,
       });
       message.success('Event added successfully');
       setIsEventModalVisible(false);
       fetchEvents(); 
     } catch (error) {
-      message.error('Failed to add event');
+      console.log(error)
+      message.error('Failed to add event ');
     }
   };
 
@@ -90,10 +93,10 @@ const EventManagement: React.FC = () => {
         footer={null}
       >
         <Form layout="vertical" onFinish={handleAddEvent}>
-          <Form.Item name="event" label="Event" rules={[{ required: true, message: 'Please enter an event' }]}>
+          <Form.Item name="eventName" label="Event" rules={[{ required: true, message: 'Please enter an event' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="date" label="Date" rules={[{ required: true, message: 'Please select a date' }]}>
+          <Form.Item name="eventDate" label="Date" rules={[{ required: true, message: 'Please select a date' }]}>
             <Input type="date" />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>

@@ -53,7 +53,7 @@ const UserManagement: React.FC = () => {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      await axios.delete(`http://localhost:5000/admin/deleteUser${userId}`);
+      await axios.delete(`http://localhost:5000/admin/deleteUser/${userId}`);
       message.success('User deleted successfully');
       fetchUsers(); 
     } catch (error) {

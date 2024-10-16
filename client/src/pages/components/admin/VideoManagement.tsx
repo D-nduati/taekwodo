@@ -16,12 +16,11 @@ const VideoManagement: React.FC = () => {
       const fileName = (info.file.originFileObj as RcFile).name;
       const newVideo = { ...videoDetails, videoUrl: fileName };
       
-      // Save the video details to the database
-      await axios.post('/api/videos', newVideo);
+      await axios.post('http://localhost:5000/admin/saveVideos', newVideo);
       
       setUploadedVideos([...uploadedVideos, newVideo]);
       message.success('Video uploaded successfully');
-      setVideoDetails({ title: '', description: '', category: '' }); // Reset input fields
+      setVideoDetails({ title: '', description: '', category: '' }); 
     } else if (info.file.status === 'error') {
       message.error('Video upload failed');
     }
