@@ -14,6 +14,8 @@ const {adminRoutes} = require('./Routes/adminroutes');
 const { Membersroute } = require("./Routes/MembersRoutes");
 const { SettingsUsers } = require("./Routes/SettingsRoutes");
 const { ProfileRoute } = require("./Routes/ProfileRoutes");
+const { clientQuiz } = require("./Routes/clientQuizRoute");
+const { Ranking } = require("./Routes/Ranking");
 
 // const {authMiddleware} = require('./middleware/authMiddleware')
 
@@ -39,6 +41,8 @@ app.use('/admin',adminRoutes);
 app.use('/members',Membersroute);
 app.use('/settings',SettingsUsers)
 app.use('/profile',ProfileRoute);
+app.use('/quiz',clientQuiz);
+app.use('/ranks',Ranking);
 
 
 app.use((err, req, res, next) => {

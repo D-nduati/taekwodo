@@ -1,23 +1,51 @@
-import React from 'react';
-import { List, Card, Calendar, Layout, Typography, Row, Col, Avatar, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { List, Card, Calendar, Layout, Typography, Row, Col, Avatar, Tooltip, message } from 'antd';
 import { FireOutlined, ThunderboltOutlined, HeartOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const { Content } = Layout;
-const { Title, Text,Paragraph } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
-const trainingData = [
-  { date: '2024-09-10', type: 'Sparring', icon: <FireOutlined style={{ color: '#ff4d4f' }} /> },
-  { date: '2024-09-12', type: 'Forms', icon: <ThunderboltOutlined style={{ color: '#1890ff' }} /> },
-  { date: '2024-09-15', type: 'Conditioning', icon: <HeartOutlined style={{ color: '#52c41a' }} /> },
-];
+interface TrainingEvent {
+  eventName: string;
+  eventDate: string;
+  status: string;
+}
 
-const motivationalQuotes = [
-  "The pain you feel today will be the strength you feel tomorrow.",
-  "Don’t limit your challenges. Challenge your limits.",
-  "Push yourself, because no one else is going to do it for you.",
-];
 
 const Training = () => {
+  const [trainingSessions, setTrainingSessions] = useState<TrainingEvent[]>([]);
+
+  useEffect(() => {
+    fetchTrainingSessions();
+  }, []);
+
+  const fetchTrainingSessions = async () => {
+    try {
+      const response = await axios.get<TrainingEvent[]>('http://localhost:5000/admin/getevents');
+      setTrainingSessions(response.data.filter(event => event.status === 'Scheduled')); // Only fetch scheduled events
+    } catch (error) {
+      message.error('Failed to fetch training sessions');
+    }
+  };
+
+  const motivationalQuotes = [
+    "The pain you feel today will be the strength you feel tomorrow.",
+    "Don’t limit your challenges. Challenge your limits.",
+    "Push yourself, because no one else is going to do it for you.",
+  ];
+
+  // const iconMap = {
+  //   Sparring: <FireOutlined style={{ color: '#ff4d4f' }} />,
+  //   Forms: <ThunderboltOutlined style={{ color: '#1890ff' }} />,
+  //   Conditioning: <HeartOutlined style={{ color: '#52c41a' }} />,
+  // };
+  const iconMap: Record<string, React.ReactElement> = {
+    Sparring: <FireOutlined style={{ color: '#ff4d4f' }} />,
+    Forms: <ThunderboltOutlined style={{ color: '#1890ff' }} />,
+    Conditioning: <HeartOutlined style={{ color: '#52c41a' }} />,
+  };
+
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '50px 20px' }}>
       <Content style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -40,14 +68,14 @@ const Training = () => {
             >
               <List
                 itemLayout="horizontal"
-                dataSource={trainingData}
+                dataSource={trainingSessions}
                 renderItem={(item) => (
                   <List.Item>
-                    <List.Item.Meta
-                      avatar={<Avatar icon={item.icon} />}
-                      title={<Text strong>{`Date: ${item.date}`}</Text>}
-                      description={<Text>{`Training Type: ${item.type}`}</Text>}
-                    />
+                  <List.Item.Meta
+  avatar={<Avatar icon={iconMap[item.eventName] || <FireOutlined />} />} // Fallback to FireOutlined
+  title={<Text strong>{`Date: ${item.eventDate}`}</Text>}
+  description={<Text>{`Training Type: ${item.eventName}`}</Text>}
+/>
                   </List.Item>
                 )}
               />
@@ -94,10 +122,7 @@ const Training = () => {
               <Calendar fullscreen={false} style={{ borderRadius: '12px' }} />
             </Card>
           </Col>
-        </Row>
-
-        {/* Preparation Tips Section */}
-        <Title
+          <Title
           level={3}
           style={{ marginTop: '50px', textAlign: 'center', color: '#001529', fontWeight: 'bold' }}
         >
@@ -166,6 +191,7 @@ const Training = () => {
               </Paragraph>
             </Card>
           </Col>
+        </Row>
         </Row>
       </Content>
     </Layout>
