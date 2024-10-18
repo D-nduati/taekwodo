@@ -6,6 +6,8 @@ const {GetAllEvents, NewEvent,DeleteEvent} =require('../Controlers/admin/adminEv
 const { SaveVideo, GetVideos} = require('../Controlers/admin/adminVideoManagement');
 const {  GetQuizDetails, GetAllQuizzes, AddQuestion, CreateQuiz } = require('../Controlers/admin/QuizManager');
 
+const {createQuiz} = require('../Controlers/admin/AdminQuizCreation')
+
 adminRoutes.get('/getusers',GetAllUsers);
 adminRoutes.post('/createNewUser', CreateNewUser);
 adminRoutes.delete('/deleteUser/:UserId',DeleteUser);
@@ -23,7 +25,11 @@ adminRoutes.get('/getVideos',GetVideos)
 adminRoutes.get('quizDetails/:quizId',GetQuizDetails);
 adminRoutes.get('/getAllQuizzes',GetAllQuizzes);
 adminRoutes.post('/addQuestion',AddQuestion);
-adminRoutes.post('/createQuiz',CreateQuiz);
+// adminRoutes.post('/createQuiz',CreateQuiz);
+
+//Just new quiz implementedd
+
+adminRoutes.post('/createQuiz',createQuiz)
 
 
 module.exports = {adminRoutes};

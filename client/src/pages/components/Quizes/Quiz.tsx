@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  Progress,
-  Card,
-  Row,
-  Col,
-  Typography,
-  notification,
-} from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Progress, Card, Row, Col, Typography, notification } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
+import axios from 'axios';
 
 const { Text } = Typography;
 
@@ -19,136 +12,7 @@ interface Question {
 }
 
 const quizQuestions: Question[] = [
-  {
-    question: 'What does the word "Taekwondo" mean?',
-    options: [
-      'Hand techniques',
-      'Foot techniques',
-      'Way of the hand and foot',
-      'Martial arts',
-    ],
-    correctAnswer: 2,
-  },
-  {
-    question: 'Which belt comes after the yellow belt in Taekwondo?',
-    options: ['Green', 'Blue', 'Red', 'White'],
-    correctAnswer: 0,
-  },
-  {
-    question: 'What is the primary goal of Taekwondo training?',
-    options: [
-      'Physical fitness',
-      'Self-defense',
-      'Mental discipline',
-      'All of the above',
-    ],
-    correctAnswer: 3,
-  },
-  {
-    question: 'In Taekwondo, what is a "dojang"?',
-    options: [
-      'A place for sparring',
-      'A form of belt',
-      'A training hall',
-      'A type of kick',
-    ],
-    correctAnswer: 2,
-  },
-  {
-    question: 'What is the highest belt in Taekwondo?',
-    options: ['Black', 'Red', 'Green', 'Blue'],
-    correctAnswer: 0,
-  },
-  {
-    question: 'Which of these is a common Taekwondo stance?',
-    options: ['Fighting stance', 'Tiger stance', 'Horse stance', 'Dragon stance'],
-    correctAnswer: 2,
-  },
-  {
-    question: 'Which of the following is a basic Taekwondo kick?',
-    options: [
-      'Roundhouse kick',
-      'Side kick',
-      'Front kick',
-      'All of the above',
-    ],
-    correctAnswer: 3,
-  },
-  {
-    question: 'In Taekwondo competitions, what is the main area of focus for scoring?',
-    options: ['Punching', 'Kicking', 'Blocking', 'Stances'],
-    correctAnswer: 1,
-  },
-  {
-    question: 'What is the Korean term for "attention" in Taekwondo?',
-    options: ['Charyot', 'Kyungnet', 'Joonbi', 'Kihap'],
-    correctAnswer: 0,
-  },
-  {
-    question: 'What is the purpose of the Taekwondo "ki-hap"?',
-    options: [
-      'To scare the opponent',
-      'To focus energy',
-      'To breathe properly',
-      'To intimidate the judge',
-    ],
-    correctAnswer: 1,
-  },
-  {
-    question: 'What does "tae" represent in Taekwondo?',
-    options: [
-      'Mind',
-      'Hand',
-      'Foot',
-      'Spirit',
-    ],
-    correctAnswer: 2,
-  },
-  {
-    question: 'What does "kwon" represent in Taekwondo?',
-    options: [
-      'Mind',
-      'Spirit',
-      'Hand',
-      'Foot',
-    ],
-    correctAnswer: 2,
-  },
-  {
-    question: 'What is the Korean word for "form" or "pattern" in Taekwondo?',
-    options: ['Kumite', 'Kata', 'Poomsae', 'Hyung'],
-    correctAnswer: 2,
-  },
-  {
-    question: 'How many basic forms (poomsae) are there in Taekwondo?',
-    options: ['4', '6', '8', '10'],
-    correctAnswer: 2,
-  },
-  {
-    question: 'In Taekwondo, what does "dan" represent?',
-    options: ['A form of punch', 'A kick', 'A rank or degree', 'A training technique'],
-    correctAnswer: 2,
-  },
-  {
-    question: 'What is the meaning of the black belt in Taekwondo?',
-    options: [
-      'Mastery of basic techniques',
-      'Completion of training',
-      'End of the journey',
-      'Start of a new journey and mastery of techniques',
-    ],
-    correctAnswer: 3,
-  },
-  {
-    question: 'Which of the following is a tenet of Taekwondo?',
-    options: [
-      'Perseverance',
-      'Self-control',
-      'Courtesy',
-      'All of the above',
-    ],
-    correctAnswer: 3,
-  }
+  // ... your quizQuestions data here
 ];
 
 const TaekwondoQuiz: React.FC = () => {
@@ -159,8 +23,30 @@ const TaekwondoQuiz: React.FC = () => {
     { question: string; correct: boolean }[]
   >([]);
   const [quizCompleted, setQuizCompleted] = useState(false);
-
   const totalQuestions = quizQuestions.length;
+
+  // User and quiz IDs - these would typically come from props or state
+  const userID = '4';  // Replace with actual user ID
+  const quizID = '';  // Replace with actual quiz ID
+
+  // Handle submitting quiz result to the server
+  const submitQuizResult = async (score: number) => {
+    try {
+      await axios.post('/api/submitQuizResult', { userID, quizID, score });
+      notification.success({
+        message: 'Quiz Submitted!',
+        description: `Your score of ${score} has been submitted.`,
+        duration: 2,
+      });
+    } catch (error) {
+      notification.error({
+        message: 'Submission Failed',
+        description: 'Failed to submit your quiz result. Please try again.',
+        duration: 2,
+      });
+    }
+  };
+
 
   const handleAnswerClick = (index: number) => {
     setSelectedAnswer(index);
@@ -192,6 +78,7 @@ const TaekwondoQuiz: React.FC = () => {
         setSelectedAnswer(null);
       } else {
         setQuizCompleted(true);
+        submitQuizResult(score); 
       }
     }, 1500);
   };
@@ -225,7 +112,7 @@ const TaekwondoQuiz: React.FC = () => {
       ) : (
         <>
           <Progress percent={(currentQuestion / totalQuestions) * 100} status="active" />
-          <Card title={`Question ${currentQuestion + 1} of ${totalQuestions}`} bordered={false} style={{ marginTop: '20px', minHeight:'60vh'}}>
+          <Card title={`Question ${currentQuestion + 1} of ${totalQuestions}`} bordered={false} style={{ marginTop: '20px', minHeight: '60vh' }}>
             <Text strong>{quizQuestions[currentQuestion].question}</Text>
             <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
               {quizQuestions[currentQuestion].options.map((option, index) => (

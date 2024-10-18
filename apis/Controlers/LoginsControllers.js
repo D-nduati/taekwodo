@@ -2,15 +2,7 @@ const bcrypt =  require('bcryptjs')
 const sql = require('mssql/msnodesqlv8');
 const jwt = require('jsonwebtoken');
 
-// const config = {
-//   server: "DESKTOP-5TSB55R\\SQLEXPRESS",
-//   Database:"Taekwondo",
-//   options: {
-//     trustedConnection: true, 
-//     trustServerCertificate: true, 
-//   },
-//   driver: "msnodesqlv8", 
-// };
+
 const config = {
   connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
 };

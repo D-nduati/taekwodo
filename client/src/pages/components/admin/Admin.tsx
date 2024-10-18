@@ -5,6 +5,7 @@ import { UserOutlined, VideoCameraOutlined, CalendarOutlined, BarChartOutlined }
 import UserManagement from './UserManagement';
 import EventManagement from './EventManagement';
 import VideoManagement from './VideoManagement';
+import QuizManager from './QuizManager';
 import AnalyticsDashboard from './AnalyticsBoard';
 
 const { Content, Header } = Layout;
@@ -50,6 +51,17 @@ const Admin: React.FC = () => {
             key="3"
           >
             <EventManagement />
+          </TabPane>
+          <TabPane
+            tab={
+              <span>
+                <CalendarOutlined />
+                QuiZ Management
+              </span>
+            }
+            key="6"
+          >
+            <QuizManager />
           </TabPane>
           <TabPane
             tab={

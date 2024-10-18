@@ -1,50 +1,86 @@
-import React from 'react';
-import { Card, Avatar, List, Layout, Typography, Button, Badge, Tag, Space } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Avatar, List, Layout, Typography, Button, Badge, Tag, Space, message } from 'antd';
+import { Link } from 'umi';
 import { UserOutlined, TrophyOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
+import axios from 'axios'; 
 
 const { Title, Text } = Typography;
 
 const Profile: React.FC = () => {
-  const achievements = ['Black Belt - 2nd Dan', 'National Champion 2023', 'Taekwondo Instructor'];
-  const skills = ['Sparring', 'Forms', 'Self-Defense', 'Coaching', 'Physical Conditioning'];
+  const [profileData, setProfileData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/profile/getProfileData'); 
+        setProfileData(response.data);
+        setLoading(false);
+      } catch (error) {
+        message.error('Failed to load profile data');
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  
+  const handleUpdateProfile = async () => {
+    try {
+      await axios.put('http://localhost:5000/profile/updateProfile', profileData); 
+      message.success('Profile updated successfully');
+    } catch (error) {
+      message.error('Failed to update profile');
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const { username, role, avatarUrl, achievements = [], skills = [] } = profileData || {};
 
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '40px 0' }}>
       <div className="profile-container" style={{ maxWidth: 800, margin: 'auto', backgroundColor: '#fff', borderRadius: 16, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
         
-        {/* Profile Header with Background and Avatar */}
+     
         <div style={{ position: 'relative', padding: '20px', background: 'linear-gradient(90deg, #ff7e5f, #feb47b)', borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-          <Avatar size={100} icon={<UserOutlined />} style={{ border: '4px solid #fff', position: 'absolute', top: 20, left: 30 }} />
+          <Avatar size={100} src={avatarUrl} icon={<UserOutlined />} style={{ border: '4px solid #fff', position: 'absolute', top: 20, left: 30 }} />
           <div style={{ marginLeft: 150 }}>
-            <Title level={2} style={{ color: '#fff' }}>John Doe</Title>
-            <Text type="secondary" style={{ color: '#fff' }}>Taekwondo Enthusiast | Instructor</Text>
+            <Title level={2} style={{ color: '#fff' }}>{username}</Title>
+            <Text type="secondary" style={{ color: '#fff' }}>{role}</Text>
           </div>
           <Button shape="circle" icon={<EditOutlined />} style={{ position: 'absolute', top: 20, right: 20, color: '#fff', borderColor: '#fff' }} />
         </div>
         
-        {/* Profile Details */}
+       
         <div style={{ padding: '20px' }}>
           <Space style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-            <Button type="primary">Edit Profile</Button>
-            <Button icon={<SettingOutlined />}>Settings</Button>
+            <Button type="primary" onClick={handleUpdateProfile}>Update Profile</Button>
+            <Button icon={<SettingOutlined />}>
+              <Link to='/dashboard/settings'>Settings</Link>
+            </Button>
           </Space>
 
-          {/* Skills Section */}
+          
           <div style={{ marginBottom: 20 }}>
             <Text strong>Skills:</Text>
             <div style={{ marginTop: 10 }}>
-              {skills.map(skill => (
+              {skills.map((skill: string) => (
                 <Tag key={skill} color="blue" style={{ marginBottom: 8 }}>{skill}</Tag>
               ))}
             </div>
           </div>
 
-          {/* Achievements Section */}
+        
           <Card title="Achievements" bordered={false}>
             <List
               itemLayout="horizontal"
               dataSource={achievements}
-              renderItem={item => (
+              renderItem={(item: string) => (
                 <List.Item>
                   <List.Item.Meta
                     avatar={<TrophyOutlined style={{ fontSize: 24, color: '#fadb14' }} />}
@@ -54,15 +90,6 @@ const Profile: React.FC = () => {
               )}
             />
           </Card>
-
-          {/* Additional Actions */}
-          <div style={{ marginTop: 20 }}>
-            <Card bordered={false} style={{ textAlign: 'center' }}>
-              <Button type="link" block>Update Profile</Button>
-              <Button type="link" block>Share Latest News</Button>
-              <Button type="link" block>Ready for Competition</Button>
-            </Card>
-          </div>
         </div>
       </div>
     </Layout>

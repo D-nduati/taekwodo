@@ -140,4 +140,36 @@ CREATE TABLE UserQuizResults (
     FOREIGN KEY (QuizID) REFERENCES Quizzes(QuizID)
   )
 
+CREATE TABLE Profiles (
+    ProfileId UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    UserId UNIQUEIDENTIFIER,  
+    Username NVARCHAR(100) NOT NULL,
+    Role NVARCHAR(50),
+    AvatarUrl NVARCHAR(255),
+    Achievements NVARCHAR(MAX), 
+    Skills NVARCHAR(MAX),       
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME DEFAULT GETDATE(),
+    
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+INSERT INTO Profiles (UserId, Username, Role, AvatarUrl, Achievements, Skills)
+VALUES (
+    '123e4567-e89b-12d3-a456-426614174000',  -- Example UserId from the Users table
+    'John Doe',
+    'Taekwondo Instructor',
+    'https://example.com/avatar.jpg',
+    '[\"Black Belt - 2nd Dan\", \"National Champion 2023\", \"Taekwondo Instructor\"]',  -- JSON array for achievements
+    '[\"Sparring\", \"Forms\", \"Self-Defense\", \"Coaching\", \"Physical Conditioning\"]'  -- JSON array for skills
+);
+
+{
+  "userId": "123e4567-e89b-12d3-a456-426614174000",
+  "username": "John Doe",
+  "role": "Taekwondo Instructor",
+  "avatarUrl": "https://example.com/avatar.jpg",
+  "achievements": ["Black Belt - 2nd Dan", "National Champion 2023", "Taekwondo Instructor"],
+  "skills": ["Sparring", "Forms", "Self-Defense", "Coaching", "Physical Conditioning"]
+}
 
