@@ -59,8 +59,8 @@ function AuthForm() {
       } else {
         message.error(`${formType.charAt(0).toUpperCase() + formType.slice(1)} failed. Please try again.`);
       }
-      console.error('Error posting form data:', err);
-message.error(err)
+      console.log('Error posting form data:', err);
+
     } finally {
       setLoading(false);
     }

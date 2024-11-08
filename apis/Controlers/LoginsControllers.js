@@ -14,7 +14,10 @@ module.exports = {
 
     try {
       const pool = await sql.connect(config);
-      console.log(pool)
+    
+
+    
+     
       const result = await pool.request().input('email', sql.VarChar, email).query('SELECT * FROM Users WHERE email = @email');
       const user = result.recordset[0];
 
@@ -36,9 +39,10 @@ module.exports = {
         token: token,
         userId: user.UserId
       });
+    
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ message: "Server jvckc error" });
+      return res.status(500).json({ message: "Server",error:err });
     }
   },
 

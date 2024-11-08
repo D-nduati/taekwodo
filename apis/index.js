@@ -17,10 +17,10 @@ const { ProfileRoute } = require("./Routes/ProfileRoutes");
 const { clientQuiz } = require("./Routes/clientQuizRoute");
 const { Ranking } = require("./Routes/Ranking");
 
-// const {authMiddleware} = require('./middleware/authMiddleware')
+ const {authMiddleware} = require('./middleware/authMiddleware')
 
 
-// Connect to MongoDB database
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
