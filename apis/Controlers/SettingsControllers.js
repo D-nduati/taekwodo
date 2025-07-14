@@ -1,4 +1,4 @@
-const { query } = require('./db'); 
+const { query } = require('./db');
 
 module.exports = {
   // Get user settings by ID
@@ -35,7 +35,9 @@ module.exports = {
     try {
       const result = await query(
         `UPDATE UserSettings 
-         SET Username = ?, 
+         SET
+         UserId = ?, 
+         Username = ?, 
              Email = ?, 
              PasswordHash = ?, 
              ReceiveEmails = ?, 
@@ -44,7 +46,7 @@ module.exports = {
              TwoFactorAuth = ?, 
              AvatarUrl = ?
          WHERE UserID = ?`,
-        [
+        [userId,
           username,
           email,
           passwordHash,
@@ -58,9 +60,9 @@ module.exports = {
       );
 
       if (result.affectedRows > 0) {
-        res.json({ success:'ok',message: 'User settings updated successfully' });
+        res.json({ success: 'ok', message: 'User settings updated successfully' });
       } else {
-        res.status(304).json({ message: 'User settings not found',results:[result] });
+        res.status(304).json({ message: 'User settings not found', results: [result] });
       }
     } catch (err) {
       res.status(500).json({ message: 'Error updating user settings', error: err.message });
@@ -101,9 +103,8 @@ module.exports = {
 
       if (result.affectedRows > 0) {
         res.json({
-          message: `Two-Factor Authentication ${
-            twoFactorAuth ? 'enabled' : 'disabled'
-          } successfully`,
+          message: `Two-Factor Authentication ${twoFactorAuth ? 'enabled' : 'disabled'
+            } successfully`,
         });
       } else {
         res.status(404).json({ message: 'User not found' });
