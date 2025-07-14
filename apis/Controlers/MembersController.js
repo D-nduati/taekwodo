@@ -1,112 +1,106 @@
-const sql = require('mssql/msnodesqlv8');
-
-const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
-};
+const { query } = require('./db');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
+  // GET all posts with their comments and like count
   GetAllPosts: async (req, res) => {
     try {
-   const pool = await sql.connect(config);
-      if (pool.connected) {
-        const postsQuery = `SELECT p.Id, p.Author, p.Content, p.ImageUrl, p.VideoUrl, p.CreatedAt,
-                                   ISNULL(l.LikeCount, 0) AS Likes
-                            FROM Posts p
-                            LEFT JOIN (SELECT Id, COUNT(*) AS LikeCount FROM Likes GROUP BY Id) l
-                            ON p.Id = l.Id`;
+      // Get all posts (with like count from Posts table)
+      const posts = await query(`
+        SELECT Id, Author, Content, ImageUrl, VideoUrl, Likes, CreatedAt
+        FROM Posts
+      `);
 
-        const posts = await pool.query(postsQuery);
+      // Get all comments for all posts
+      const comments = await query(`SELECT * FROM Comments`);
 
-        const commentsQuery = `SELECT * FROM Comments WHERE Id IN (SELECT Id FROM Posts)`;
-        const comments = await pool.query(commentsQuery);
+      // Attach comments to each post
+      const postsWithComments = posts.map(post => ({
+        ...post,
+        comments: comments.filter(comment => comment.PostID === post.Id),
+      }));
 
-        const postsWithComments = posts.recordset.map(post => ({
-          ...post,
-          comments: comments.recordset.filter(comment => comment.Id === post.Id),
-        }));
-
-        res.json(postsWithComments);
-      } else {
-        res.status(500).json({ message: 'Error connecting to the database' });
-      }
+      res.json(postsWithComments);
     } catch (err) {
       res.status(500).json({ message: 'Error fetching posts', error: err.message });
     }
   },
 
-
+  // CREATE a new post
   CreatePost: async (req, res) => {
     const { author, content, imageUrl, videoUrl } = req.body;
+    const id = uuidv4(); // UUIDv4 for CHAR(36)
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        INSERT INTO Posts (Author, Content, ImageUrl, VideoUrl, CreatedAt)
-        VALUES (${author}, ${content}, ${imageUrl}, ${videoUrl}, GETDATE());
-        SELECT * FROM Posts WHERE Id = SCOPE_IDENTITY();
-      `;
+      await query(
+        `INSERT INTO Posts (Id, Author, Content, ImageUrl, VideoUrl) VALUES (?, ?, ?, ?, ?)`,
+        [id, author, content, imageUrl, videoUrl]
+      );
 
-      res.status(201).json(result.recordset[0]);
+      const [newPost] = await query(`SELECT * FROM Posts WHERE Id = ?`, [id]);
+      res.status(201).json(newPost);
     } catch (err) {
       res.status(500).send(err.message);
     }
   },
 
-  
+  // UPDATE a post by ID
   UpdatePost: async (req, res) => {
     const { content, imageUrl, videoUrl } = req.body;
     const { id } = req.params;
 
     try {
-   const pool = await sql.connect(config);
-      if (pool.connected) {
-        const result = await pool.query`
-          UPDATE Posts 
-          SET Content = ${content}, ImageUrl = ${imageUrl}, VideoUrl = ${videoUrl} 
-          WHERE Id = ${id};
-        `;
+      const result = await query(
+        `UPDATE Posts SET Content = ?, ImageUrl = ?, VideoUrl = ? WHERE Id = ?`,
+        [content, imageUrl, videoUrl, id]
+      );
 
-        if (result.rowsAffected[0] > 0) {
-          res.status(204).json({ message: 'Post updated successfully' });
-        } else {
-          res.status(404).json({ message: 'Post not found' });
-        }
+      if (result.affectedRows > 0) {
+        res.status(200).json({ message: 'Post updated successfully' });
       } else {
-        res.status(500).json({ message: 'Error connecting to the database' });
+        res.status(404).json({ message: 'Post not found' });
       }
     } catch (err) {
       res.status(500).send(err.message);
     }
   },
 
-
+  // DELETE a post by ID
   DeletePost: async (req, res) => {
     const { id } = req.params;
 
     try {
-   const pool = await sql.connect(config);
-      await pool.query`
-        DELETE FROM Posts
-        WHERE Id = ${id};
-      `;
-
-      res.json({ status: 'ok', message: 'Successfully deleted post' });
+      await query(`DELETE FROM Posts WHERE Id = ?`, [id]);
+      res.json({ status: 'ok', message: 'Post deleted successfully' });
     } catch (err) {
       res.status(500).send(err.message);
     }
   },
 
-
+  // LIKE a post
   LikePost: async (req, res) => {
-    const { Id } = req.params;
+    const { Id } = req.params; // PostID
     const { likedBy } = req.body;
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        INSERT INTO Likes (Id, LikedBy, CreatedAt)
-        VALUES (${Id}, ${likedBy}, GETDATE());
-      `;
+      // Prevent duplicate likes by the same user
+      const [existingLike] = await query(
+        `SELECT * FROM Likes WHERE PostID = ? AND LikedBy = ?`,
+        [Id, likedBy]
+      );
+
+      if (existingLike) {
+        return res.status(400).json({ message: 'You already liked this post' });
+      }
+
+      // Insert like
+      await query(
+        `INSERT INTO Likes (PostID, LikedBy) VALUES (?, ?)`,
+        [Id, likedBy]
+      );
+
+      // Update Posts table's like count
+      await query(`UPDATE Posts SET Likes = Likes + 1 WHERE Id = ?`, [Id]);
 
       res.json({ message: 'Post liked successfully' });
     } catch (err) {
@@ -114,19 +108,23 @@ module.exports = {
     }
   },
 
- 
+  // ADD comment to a post
   AddComment: async (req, res) => {
-    const { Id } = req.params;
+    const { Id } = req.params; // PostID
     const { author, content } = req.body;
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        INSERT INTO Comments (Id, Author, Content, CreatedAt)
-        VALUES (${Id}, ${author}, ${content}, GETDATE());
-      `;
+      if (author !=""&& content!="") {
+        await query(
+          `INSERT INTO Comments (PostID, Author, Content) VALUES (?, ?, ?)`,
+          [Id, author, content]
+        );
 
-      res.json({ message: 'Comment added successfully' });
+
+        res.status(201).json({ message: 'Comment added successfully' });
+      } else {
+        res.status(403).json({ message: 'must contain author and the comment' })
+      }
     } catch (err) {
       res.status(500).json({ message: 'Error adding comment', error: err.message });
     }

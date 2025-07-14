@@ -7,4 +7,4 @@ usersroute.post('/login',login)
 usersroute.post('/signup',signup)
 usersroute.post('/changepassword',changepassword)
 
-module.exports = {usersroute}
+module.exports = {usersroute};

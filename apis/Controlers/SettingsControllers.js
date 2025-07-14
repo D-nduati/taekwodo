@@ -1,79 +1,84 @@
-const sql = require('mssql/msnodesqlv8');
-
-const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
-};
+const { query } = require('./db'); 
 
 module.exports = {
- 
+  // Get user settings by ID
   GetUserSettings: async (req, res) => {
-    const { userId } = req.params;  
+    const { userId } = req.params;
 
     try {
-   const pool = await sql.connect(config);
-      if (pool.connected) {
-        const result = await pool.query`
-          SELECT * FROM UserSettings WHERE UserID = ${userId};
-        `;
+      const result = await query(`SELECT * FROM UserSettings WHERE UserID = ?`, [userId]);
 
-        if (result.recordset.length > 0) {
-          res.json(result.recordset[0]);
-        } else {
-          res.status(404).json({ message: 'User settings not found' });
-        }
+      if (result.length > 0) {
+        res.json(result[0]);
       } else {
-        res.status(500).json({ message: 'Error connecting to the database' });
+        res.status(304).json({ message: "No settings Yet" });
       }
     } catch (err) {
       res.status(500).json({ message: 'Error fetching user settings', error: err.message });
     }
   },
 
- 
+  // Update user settings
   UpdateUserSettings: async (req, res) => {
     const { userId } = req.params;
-    const { username, email, passwordHash, receiveEmails, receiveNotifications, theme, twoFactorAuth, avatarUrl } = req.body;
+    const {
+      username,
+      email,
+      passwordHash,
+      receiveEmails,
+      receiveNotifications,
+      theme,
+      twoFactorAuth,
+      avatarUrl,
+    } = req.body;
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        UPDATE UserSettings 
-        SET Username = ${username}, 
-            Email = ${email}, 
-            PasswordHash = ${passwordHash}, 
-            ReceiveEmails = ${receiveEmails}, 
-            ReceiveNotifications = ${receiveNotifications}, 
-            Theme = ${theme}, 
-            TwoFactorAuth = ${twoFactorAuth}, 
-            AvatarUrl = ${avatarUrl},
-            UpdatedAt = GETDATE()
-        WHERE UserID = ${userId};
-      `;
+      const result = await query(
+        `UPDATE UserSettings 
+         SET Username = ?, 
+             Email = ?, 
+             PasswordHash = ?, 
+             ReceiveEmails = ?, 
+             ReceiveNotifications = ?, 
+             Theme = ?, 
+             TwoFactorAuth = ?, 
+             AvatarUrl = ?
+         WHERE UserID = ?`,
+        [
+          username,
+          email,
+          passwordHash,
+          receiveEmails,
+          receiveNotifications,
+          theme,
+          twoFactorAuth,
+          avatarUrl,
+          userId,
+        ]
+      );
 
-      if (result.rowsAffected[0] > 0) {
-        res.json({ message: 'User settings updated successfully' });
+      if (result.affectedRows > 0) {
+        res.json({ success:'ok',message: 'User settings updated successfully' });
       } else {
-        res.status(404).json({ message: 'User settings not found' });
+        res.status(304).json({ message: 'User settings not found',results:[result] });
       }
     } catch (err) {
       res.status(500).json({ message: 'Error updating user settings', error: err.message });
     }
   },
 
- 
+  // Change only avatar
   ChangeAvatar: async (req, res) => {
     const { userId } = req.params;
     const { avatarUrl } = req.body;
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        UPDATE UserSettings 
-        SET AvatarUrl = ${avatarUrl}, UpdatedAt = GETDATE()
-        WHERE UserID = ${userId};
-      `;
+      const result = await query(
+        `UPDATE UserSettings SET AvatarUrl = ? WHERE UserID = ?`,
+        [avatarUrl, userId]
+      );
 
-      if (result.rowsAffected[0] > 0) {
+      if (result.affectedRows > 0) {
         res.json({ message: 'Avatar updated successfully' });
       } else {
         res.status(404).json({ message: 'User not found' });
@@ -83,21 +88,23 @@ module.exports = {
     }
   },
 
-  
+  // Toggle 2FA
   ToggleTwoFactorAuth: async (req, res) => {
     const { userId } = req.params;
     const { twoFactorAuth } = req.body;
 
     try {
-   const pool = await sql.connect(config);
-      const result = await pool.query`
-        UPDATE UserSettings 
-        SET TwoFactorAuth = ${twoFactorAuth}, UpdatedAt = GETDATE()
-        WHERE UserID = ${userId};
-      `;
+      const result = await query(
+        `UPDATE UserSettings SET TwoFactorAuth = ? WHERE UserID = ?`,
+        [twoFactorAuth, userId]
+      );
 
-      if (result.rowsAffected[0] > 0) {
-        res.json({ message: `Two-Factor Authentication ${twoFactorAuth ? 'enabled' : 'disabled'} successfully` });
+      if (result.affectedRows > 0) {
+        res.json({
+          message: `Two-Factor Authentication ${
+            twoFactorAuth ? 'enabled' : 'disabled'
+          } successfully`,
+        });
       } else {
         res.status(404).json({ message: 'User not found' });
       }

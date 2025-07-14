@@ -15,7 +15,7 @@ adminRoutes.delete('/deleteUser/:UserId',DeleteUser);
 // for the events
 adminRoutes.get('/getevents',GetAllEvents);
 adminRoutes.post('/createEvents', NewEvent);
-adminRoutes.delete('/deleteEvents/:id',DeleteEvent);
+adminRoutes.delete('/deleteEvents',DeleteEvent);
 
 // for the video management
 adminRoutes.post('/saveVideos',SaveVideo);
@@ -29,7 +29,7 @@ adminRoutes.post('/addQuestion',AddQuestion);
 
 //Just new quiz implementedd
 
-adminRoutes.post('/createQuiz',createQuiz)
+adminRoutes.post('/createQuiz',CreateQuiz)
 
 
 module.exports = {adminRoutes};

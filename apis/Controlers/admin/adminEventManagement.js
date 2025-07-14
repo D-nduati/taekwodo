@@ -1,48 +1,39 @@
-const sql = require('mssql/msnodesqlv8');
-const { format } = require('date-fns');
-const config = {
-  connectionString: 'Driver=SQL Server;Server=DESKTOP-5TSB55R\\SQLEXPRESS;Database=Taekwondo;Trusted_Connection=true;'
-};
+const { query } = require('../db');
+
 
 module.exports = {
   GetAllEvents: async (req, res) => {
     try {
-      const pool = await sql.connect(config);
-      let result = await pool.request().query("SELECT * FROM Events");
-      res.json(result.recordset);
+      let result = await query('SELECT * FROM Events');
+      res.status(200).json(result);
     } catch (err) {
       res.status(500).send(err.message);
     }
   },
-  
-  NewEvent: async (req, res) => {
-    const { eventName, eventDate } = req.body;
-    console.log(eventDate)
-    try {
-        let pool = await sql.connect(config);
-        await pool
-            .request()
-            .input("eventName", sql.NVarChar, eventName)
-            .input("eventDate", sql.Date, eventDate)  
-            .input("status", sql.NVarChar, "Scheduled")
-            .query(
-                `INSERT INTO Events (eventName, eventDate, status) VALUES (@eventName, @eventDate, @status)`
-            );
 
-        res.status(201).send("Event added successfully");
+  NewEvent: async (req, res) => {
+    const { eventName, eventDate,status } = req.body;
+    try {
+      const result = await query(
+        'INSERT INTO Events (eventName, eventDate, status) VALUES(?,?,?)', [eventName, eventDate, status]
+      );
+      console.log(result);
+
+      res.status(201).send("Event added successfully");
     } catch (err) {
-        res.status(500).send(err.message);
+      res.status(500).send(err.message);
     }
-},
+  },
 
   DeleteEvent: async (req, res) => {
-    const { id } = req.params;
+    const { eventName } = req.body;
     try {
-      let pool = await sql.connect(config);
-      await pool
-        .request()
-        .input("id", sql.UniqueIdentifier, id)
-        .query("DELETE FROM Events WHERE id = @id");
+      const result = await query('DELETE FROM Events WHERE eventName = ? ', [eventName]);
+      if (result.affectedRows > 0) {
+        res.status(200).send('Event deleted successfully');
+      } else {
+        res.status(404).json({ message: 'Event not found' });
+      }
 
       res.send("Event deleted successfully");
     } catch (err) {

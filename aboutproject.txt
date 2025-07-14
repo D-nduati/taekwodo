@@ -1,0 +1,33 @@
+front end: necessities: 
+
+advised to have nvm to manage node : 
+using node 15:
+ nvm use 15:
+ installing dependencies: 
+
+ npm install legacy--peer-deps
+
+
+backend necessities: 
+
+requires an env file with the login credentials  for moongose to run
+ as of now i have commented the code so the pricing option wont work: but the other endpoints will hit 
+
+
+contains both queries for mysql and mssl.
+for the management of database am using dbeaver view, run queries:
+
+installing flatpak:  sudo apt-get install flatpakref
+
+sudo apt-get flatpak
+sudo apt install flatpak
+
+installing dbeaver: need to have flathub installed in machine (ubuntu)
+command: flatpak install flathub io.dbeaver.DBeaverCommunity
+
+checking if you have mysql sever in ubuntu: 
+systemctl status mssql-server
+
+while using mysql: in the backend folder
+
+npm install mysql

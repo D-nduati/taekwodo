@@ -4,8 +4,8 @@ const {GetUserSettings,UpdateUserSettings,ChangeAvatar,ToggleTwoFactorAuth} =req
 
 SettingsUsers.get('/settings/:userId',GetUserSettings);
 SettingsUsers.put('/settings/:userId',UpdateUserSettings);
-SettingsUsers.put('/settings/:userId/avatar',ChangeAvatar);
-SettingsUsers.put('/settings/:userId/2fa',ToggleTwoFactorAuth);
+SettingsUsers.put('/settings/avatar/:userId',ChangeAvatar);
+SettingsUsers.put('/settings/2fa/:userId',ToggleTwoFactorAuth);
 
 module.exports = {SettingsUsers};
 

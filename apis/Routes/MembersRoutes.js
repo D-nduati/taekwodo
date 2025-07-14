@@ -7,7 +7,7 @@ Membersroute.get('/getposts', GetAllPosts);
 Membersroute.post('/createPost',CreatePost);
 Membersroute.put('/updatePost/:id',UpdatePost);
 Membersroute.delete('/deletePost/:id',DeletePost);
-Membersroute.put('/likePost/:postId/like',LikePost);
-Membersroute.post('/addComment/:postId/comment',AddComment)
+Membersroute.put('/likePost/like/:postId',LikePost);
+Membersroute.post('/addComment/comment/:postId',AddComment)
 
 module.exports = {Membersroute}

@@ -156,12 +156,12 @@ CREATE TABLE Profiles (
 
 INSERT INTO Profiles (UserId, Username, Role, AvatarUrl, Achievements, Skills)
 VALUES (
-    '123e4567-e89b-12d3-a456-426614174000',  -- Example UserId from the Users table
+    '123e4567-e89b-12d3-a456-426614174000',  
     'John Doe',
     'Taekwondo Instructor',
     'https://example.com/avatar.jpg',
-    '[\"Black Belt - 2nd Dan\", \"National Champion 2023\", \"Taekwondo Instructor\"]',  -- JSON array for achievements
-    '[\"Sparring\", \"Forms\", \"Self-Defense\", \"Coaching\", \"Physical Conditioning\"]'  -- JSON array for skills
+    '[\"Black Belt - 2nd Dan\", \"National Champion 2023\", \"Taekwondo Instructor\"]',  
+    '[\"Sparring\", \"Forms\", \"Self-Defense\", \"Coaching\", \"Physical Conditioning\"]'  
 );
 
 {

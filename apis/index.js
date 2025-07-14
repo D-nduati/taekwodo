@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const TokenRoute = require("./Routes/token")
 
 const app = express();
-require("dotenv").config();
+// require("dotenv").config();
 app.use(express.json());
 app.use(cors());
 
@@ -17,18 +17,18 @@ const { ProfileRoute } = require("./Routes/ProfileRoutes");
 const { clientQuiz } = require("./Routes/clientQuizRoute");
 const { Ranking } = require("./Routes/Ranking");
 
- const {authMiddleware} = require('./middleware/authMiddleware')
+//  const {authMiddleware} = require('./middleware/authMiddleware');
 
 
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log("Connected to MongoDB");
-}).catch((err) => {
-  console.error("Error connecting to MongoDB:", err);
-});
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// }).then(() => {
+//   console.log("Connected to MongoDB");
+// }).catch((err) => {
+//   console.error("Error connecting to MongoDB:", err);
+// });
 
 
 // app.use("/protected", authMiddleware, (req, res) => {
@@ -52,6 +52,9 @@ app.use((err, req, res, next) => {
 
 
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+// app.listen(process.env.PORT, () => {
+//   console.log(`Server running on port ${process.env.PORT}`);
+// });
+app.listen(5000, () => {
+  console.log(`Server running on port 5000`);
 });
