@@ -30,7 +30,18 @@ const Members: React.FC = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('http://localhost:5000/members/getposts');
-        setPosts(response.data);
+        const normalizedPosts = response.data.map((post: any) => ({
+          id: post.Id,
+          author: post.Author,
+          content: post.Content,
+          imageUrl: post.ImageUrl,
+          videoUrl: post.VideoUrl,
+          likes: post.Likes,
+          comments: post.comments || [],
+          CreatedAt: post.CreatedAt,
+          timestamp: post.CreatedAt, 
+        }));
+        setPosts(normalizedPosts);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -38,6 +49,7 @@ const Members: React.FC = () => {
   
     fetchPosts();
   }, []);
+  
   
   
 
@@ -82,7 +94,7 @@ const Members: React.FC = () => {
   const handleCreatePost = async () => {
     if (newPostContent || imageFile || videoFile) {
       const formData = new FormData();
-      formData.append('author', 'You');
+      formData.append('author', 'john');
       formData.append('content', newPostContent);
       if (imageFile) formData.append('image', imageFile);
       if (videoFile) formData.append('video', videoFile);
@@ -181,36 +193,36 @@ const Members: React.FC = () => {
             }}
           >
             <Card.Meta
-              avatar={<Avatar style={{ backgroundColor: '#87d068' }}>{post.author[0]}</Avatar>}
+              avatar={<Avatar style={{ backgroundColor: '#87d068' }}>{post?.author[0]}</Avatar>}
               title={<span style={{ fontWeight: 600 }}>{post.author}</span>}
               description={<span style={{ color: '#888' }}>{moment(post.timestamp).fromNow()}</span>}
             />
-            <div style={{ marginTop: '10px' }}>{post.content}</div>
-            {post.imageUrl && <img src={post.imageUrl} alt="post" style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
-            {post.videoUrl && <video src={post.videoUrl} controls style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
+            <div style={{ marginTop: '10px' }}>{post?.content}</div>
+            {post.imageUrl && <img src={post?.imageUrl} alt="post" style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
+            {post.videoUrl && <video src={post?.videoUrl} controls style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
             <div style={{ marginTop: '10px' }}>
               <Tooltip title="Like">
                 <Button
                   icon={post.likes > 0 ? <LikeFilled style={{ color: '#1890ff' }} /> : <LikeOutlined />}
-                  onClick={() => handleLikePost(post.id)}
+                  onClick={() => handleLikePost(post?.id)}
                   style={{ borderRadius: '6px', marginRight: '8px' }}
                 >
-                  {post.likes}
+                  {post?.likes}
                 </Button>
               </Tooltip>
               <Button
                 icon={<MessageOutlined />}
                 style={{ borderRadius: '6px' }}
               >
-                {post.comments.length} Comments
+                {post?.comments.length} Comments
               </Button>
             </div>
             <List
-              dataSource={post.comments}
+              dataSource={post?.comments}
               renderItem={(comment) => (
                 <Comment
-                  author={<span style={{ fontWeight: 600 }}>{comment.author}</span>}
-                  content={<span>{comment.content}</span>}
+                  author={<span style={{ fontWeight: 600 }}>{comment?.author}</span>}
+                  content={<span>{comment?.content}</span>}
                   style={{ marginTop: '10px' }}
                 />
               )}

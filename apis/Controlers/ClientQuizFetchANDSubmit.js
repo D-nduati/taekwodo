@@ -1,4 +1,4 @@
-const { query } = require('./db'); // Adjust path to your db.js
+const { query } = require('./db'); 
 
 module.exports = {
   // GET: Fetch a full quiz (with questions and options)

@@ -3,7 +3,7 @@ const { UpdateProfile,GetProfileData } = require('../Controlers/ProfileSettings'
 
 const ProfileRoute = express.Router();
 
-ProfileRoute.get('/getProfileData',GetProfileData);
-ProfileRoute.put('/updateProfile',UpdateProfile);
+ProfileRoute.get('/getProfileData/:userId',GetProfileData);
+ProfileRoute.post('/updateProfile',UpdateProfile);
 
 module.exports = {ProfileRoute};

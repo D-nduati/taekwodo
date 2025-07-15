@@ -14,17 +14,29 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/profile/getProfileData'); 
-        setProfileData(response.data);
+        const response = await axios.get('http://localhost:5000/profile/getProfileData/3');
+  
+        const profile = response.data[0];
+  
+        profile.achievements = Array.isArray(profile.achievements)
+          ? profile.achievements
+          : [profile.achievements];
+  
+        profile.skills = Array.isArray(profile.skills)
+          ? profile.skills
+          : [profile.skills];
+  
+        setProfileData(profile);
         setLoading(false);
       } catch (error) {
         message.error('Failed to load profile data');
         setLoading(false);
       }
     };
-
+  
     fetchProfile();
   }, []);
+  
 
   
   const handleUpdateProfile = async () => {
@@ -40,7 +52,7 @@ const Profile: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  const { username, role, avatarUrl, achievements = [], skills = [] } = profileData || {};
+  const { username, role, avatarUrl, achievements = [], skills = [] } = profileData;
 
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '40px 0' }}>

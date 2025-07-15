@@ -34,7 +34,9 @@ const UserQuiz: React.FC<UserQuizProps> = ({ userID, quizID }) => {
     
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/quiz/clientQuiz/${quizID}`);
+        // const response = await axios.get(`http://localhost:5000/quiz/clientQuiz/${quizID}`);
+         const response = await axios.post(`http://localhost:5000/quiz/clientQuiz/1`);
+
         const quizData = response.data;
         const formattedQuiz: Quiz = {
           quizID: quizData[0].QuizID,

@@ -9,7 +9,7 @@ module.exports = {
           u.Username,
           p.AvatarUrl,
           us.Score,
-          us.Rank
+          us.rank1 AS Rank
         FROM 
           UserScores us
         JOIN 
@@ -17,7 +17,7 @@ module.exports = {
         LEFT JOIN 
           Profiles p ON u.UserId = p.UserId
         ORDER BY 
-          us.Rank ASC
+          us.rank1 ASC
       `;
 
       const result = await query(sql);
