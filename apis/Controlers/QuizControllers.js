@@ -28,7 +28,6 @@ module.exports = {
   // POST: Submit quiz result
   SubmitQuiz: async (req, res) => {
     const { userID, quizID, score } = req.body;
-
     try {
       await query(
         `INSERT INTO UserQuizResults (UserID, QuizID, Score) VALUES (?, ?, ?)`,
