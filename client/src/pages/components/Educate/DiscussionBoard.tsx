@@ -9,13 +9,15 @@ interface Post {
   createdAt: string;
 }
 
-const DiscussionBoard = () => {
+const DiscussionBoard = ({ videoId }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState<string>('');
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (videoId) {
+      fetchPosts();
+    }
+  }, [videoId]);
 
   const fetchPosts = async () => {
     try {

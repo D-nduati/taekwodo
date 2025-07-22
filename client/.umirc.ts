@@ -26,15 +26,17 @@ export default defineConfig({
       path: '/dashboard',
       component: '@/pages/components/Dashboard/Dashboard',
       routes: [
-        { path: '/dashboard/profile', component: '@/pages/components/Profile/Profile' },
+        { path: '/dashboard/home', component: '@/pages/components/Home/Home' },                
         { path: '/dashboard/educate', component: '@/pages/components/Educate/Educate' },
+        { path: '/dashboard/quiz', component: '@/pages/components/Quizes/Quiz' },
         { path: '/dashboard/training', component: '@/pages/components/Training/Training' },
         { path: '/dashboard/rankings', component: '@/pages/components/Ranking/Ranking' },
-        { path: '/dashboard/quiz', component: '@/pages/components/Quizes/Quiz' },
+        
         { path: '/dashboard/members', component: '@/pages/components/Members/Members' },
         { path: '/dashboard/settings', component: '@/pages/components/Settings/Settings' },
         { path: '/dashboard/enroll', component: '@/pages/components/Enroll/EnrollWithUs' },
-         { path: '/dashboard/home', component: '@/pages/components/Home/Home' }, 
+        { path: '/dashboard/profile', component: '@/pages/components/Profile/Profile' },
+         
       ],
     },
   ],

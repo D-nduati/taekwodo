@@ -9,16 +9,16 @@ interface Video {
   reviews: string[];
 }
 
-const VideoRating = () => {
-  const [video, setVideo] = useState<Video>({
-    id: '1',
-    title: 'Taekwondo Basics',
-    description: 'Learn the fundamentals of Taekwondo',
-    rating: 0,
-    reviews: [],
-  });
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>('');
+const VideoRating = ({ video }) => {
+  // const [video, setVideo] = useState<Video>({
+  //   id: '1',
+  //   title: 'Taekwondo Basics',
+  //   description: 'Learn the fundamentals of Taekwondo',
+  //   rating: 0,
+  //   reviews: [],
+  // });
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
 
   const handleRatingChange = (value: number) => {
     setRating(value);
@@ -51,3 +51,5 @@ const VideoRating = () => {
     </div>
   );
 };
+
+export default VideoRating;

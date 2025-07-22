@@ -19,14 +19,14 @@ const Rankings: React.FC = () => {
   useEffect(() => {
     const fetchRankings = async () => {
       try {
-        const response = await axios.get('/api/rankings'); // Adjust API path if necessary
+        const response = await axios.get('/api/rankings'); 
         const formattedData = response.data.map((item: any) => ({
           key: item.UserId,
           rank: item.Rank,
           username: item.Username,
           avatarUrl: item.AvatarUrl,
           score: item.Score,
-          progress: Math.min(item.Score, 100), // Assuming progress is calculated based on score
+          progress: Math.min(item.Score, 100), 
         }));
         setRankingData(formattedData);
       } catch (error) {

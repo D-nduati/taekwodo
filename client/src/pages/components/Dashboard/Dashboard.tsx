@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Image } from 'antd';
+import { Layout, Menu } from 'antd';
 import { HomeOutlined, TeamOutlined, SettingOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import AppHeader from '../Header/Header';
+import Logo from '../../../../assets/taelogo.png'
 
 const { Content, Footer, Sider } = Layout;
 
@@ -18,13 +19,18 @@ const Dashboard: React.FC<DashboardProps> = ({ user, children }) => {
   }, [user]);
 
   return (
-    <Layout style={{ backgroundColor: '#BACD92' }}>
-      <Sider style={{ backgroundColor: '#BACD92', marginTop: '50px' }}>
+    <Layout style={{ backgroundColor: '#6482AD' }}>
+      <Sider style={{ backgroundColor: '#6482AD', marginTop: '3px' }}>
+      <div style={{display:"flex",justifyContent:'center'}}>
+       <img height={110} src={Logo} style={{borderRadius:'50%'}} />
+       {/* <p>More Than Kicks</p> */}
+       </div>
         <Menu
-          style={{ backgroundColor: '#BACD92' }}
+          style={{ backgroundColor: '#6482AD' }}
           mode="inline"
           defaultSelectedKeys={['1']}
         >
+         
           <Menu.Item key="1" icon={<HomeOutlined />}>
             <Link to="/dashboard/home">Home</Link>
           </Menu.Item>
@@ -43,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, children }) => {
         <Content style={{ padding: '20px' }}>{children}</Content>
 
         <Footer style={{ textAlign: 'center' }}>
-          Taekwondo App ©2024 Created by Samuel Ngigi
+          Taekwondo App ©2025 Created by Samuel Ngigi
         </Footer>
       </Layout>
     </Layout>

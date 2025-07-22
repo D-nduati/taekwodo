@@ -12,30 +12,31 @@ const handleLogout = () => {
 
 const AppHeader: React.FC = () => {
   return (
-    <Header style={{ padding: '0', backgroundColor: '#6482AD' }}>
+    <Header style={{ padding: '0', backgroundColor: '#00c6ff' }}>
       <Menu
-        theme="light"
+        // theme="light"
         mode="horizontal"
         defaultSelectedKeys={['1']}
-        style={{ width: '100%' ,backgroundColor: '#6482AD'}}
+        style={{ width: '100%' ,backgroundColor: '#00c6ff'}}
       >
         <Menu.Item key="1">
-          <Link to="/dashboard/profile">Profile</Link>
-        </Menu.Item>
-        <Menu.Item key="2">
           <Link to="/dashboard/training">Training</Link>
-        </Menu.Item>
-        <Menu.Item key="3">
-          <Link to="/dashboard/rankings">Rankings</Link>
-        </Menu.Item>
-        <Menu.Item key="4">
-          <Link to="/dashboard/quiz">Quizes</Link>
-        </Menu.Item>
-        <Menu.Item key="5">
+        </Menu.Item>        
+        <Menu.Item key="2">
           <Link to="/dashboard/educate">Learn</Link>
         </Menu.Item>
+        <Menu.Item key="3">
+          <Link to="/dashboard/quiz">Quizes</Link>
+        </Menu.Item>
+        <Menu.Item key="4">
+          <Link to="/dashboard/rankings">Rankings</Link>
+        </Menu.Item>     
+        
         <Menu.Item key="5">
           <Link to="/dashboard/enroll">Enroll With Us</Link>
+        </Menu.Item>
+        <Menu.Item key="6">
+          <Link to="/dashboard/profile">Profile</Link>
         </Menu.Item>
         <Menu.Item key="6" style={{ marginLeft: 'auto' }}>
           <Badge count={5}>

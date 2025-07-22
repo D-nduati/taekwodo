@@ -45,3 +45,53 @@
     width: 100%;
   }
 }
+.education-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.education-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.search-upload-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.education-content {
+  display: flex;
+  gap: 20px;
+}
+
+.video-section {
+  flex: 2;
+}
+
+.video-details-section {
+  flex: 1;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.video-filters {
+  width: 400px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.video-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
+}

@@ -1,188 +1,204 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Button, List, Card, Spin, message } from 'antd';
+import { Input, Button, List, Card, Space, Spin, message } from 'antd';
+import VideoRating from './VideoRating';
+import VideoUpload from './VideoUpload';
+import VideoFilter from './VideoFilter';
+import DiscussionBoard from './DiscussionBoard';
 import './Educate.css';
 
 const EducationModule = () => {
   const [videos, setVideos] = useState([]);
+  const [filteredVideos, setFilteredVideos] = useState([]);
+  const [nextPageToken, setNextPageToken] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [filter, setFilter] = useState('all');
+  const [sort, setSort] = useState('title');
 
-  const fetchVideos = async () => {
+  const combinedQuery = 'taekwondo|tkd|korean martial arts|kickboxing';
+
+  const fetchVideos = useCallback(async (reset = false) => {
     setLoading(true);
+    
     try {
-      const response = await axios.get('http://localhost:5000/admin/getVideos');
-      setVideos(response.data);
+      let query = searchQuery.trim() !== '' ? `${combinedQuery}|${searchQuery.trim()}` : combinedQuery;
+      
+      // Add filter to query if not 'all'
+      if (filter !== 'all') {
+        query += ` ${filter}`;
+      }
+
+      const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+        params: {
+          part: 'snippet',
+          maxResults: 10,
+          q: query,
+          type: 'video',
+          key: 'AIzaSyD9KTWtU9xb-T5dVCi3-6n83OHKv5O6yI8',
+          pageToken: reset ? '' : nextPageToken,
+        },
+      });
+
+      if (reset) {
+        setVideos(response.data.items);
+        setNextPageToken(response.data.nextPageToken || '');
+      } else {
+        setVideos(prev => [...prev, ...response.data.items]);
+        setNextPageToken(response.data.nextPageToken || '');
+      }
     } catch (error) {
       message.error('Error fetching videos. Please try again later.');
       console.error('Error fetching videos:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [nextPageToken, searchQuery, filter]);
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    fetchVideos(true);
+  }, [filter]); // Refetch when filter changes
 
- 
-  const groupedVideos = videos.reduce((acc, video) => {
-    (acc[video.category] = acc[video.category] || []).push(video);
-    return acc;
-  }, {});
+  useEffect(() => {
+    // Apply sorting and filtering to videos
+    const filtered = filter === 'all' 
+      ? videos 
+      : videos.filter(video => video.snippet.title.toLowerCase().includes(filter.toLowerCase()));
+    
+    const sorted = [...filtered].sort((a, b) => {
+      if (sort === 'title') return a.snippet.title.localeCompare(b.snippet.title);
+      return a.snippet.description.localeCompare(b.snippet.description);
+    });
+    
+    setFilteredVideos(sorted);
+  }, [videos, filter, sort]);
+
+  const handleSearch = () => {
+    if (searchQuery.trim() !== '') {
+      fetchVideos(true);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleLoadMore = () => {
+    fetchVideos();
+  };
+
+  const handleVideoSelect = (video) => {
+    setSelectedVideo(video);
+  };
+
+  const handleFilterChange = (value) => {
+    setFilter(value);
+    // Videos will be refetched automatically via useEffect
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
+    // Sorting is applied in the useEffect
+  };
 
   return (
     <div className="education-container">
-      <h2 className="education-heading">Taekwondo Educational Videos</h2>
+      <div className="education-header">
+        <h2>Taekwondo Education Hub</h2>
+        <div className="search-upload-section">
+          <Space direction="horizontal" className="search-section">
+            <Input
+              placeholder="Search martial arts videos"
+              value={searchQuery}
+              onChange={handleInputChange}
+              onPressEnter={handleSearch}
+              style={{ width: 300, marginRight: 0 }}
+              size="middle"
+            />
+            <Button type="primary" onClick={handleSearch} size="middle" style={{ marginLeft: 0 }}>
+              Search
+            </Button>
+          </Space>
+          <VideoUpload />
+        </div>
+      </div>
 
-      {loading && <Spin size="large" className="loading-spinner" />}
-
-      {Object.keys(groupedVideos).map((category) => (
-        <div key={category}>
-          <h3>{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
+      <div className="education-content">
+        <div className="video-section">
+          <VideoFilter 
+            onFilterChange={handleFilterChange} 
+            onSortChange={handleSortChange}
+            currentFilter={filter}
+            currentSort={sort}
+          />
+          
+          {/* Video List */}
+          {loading && <Spin size="large" className="loading-spinner" />}
+          
           <List
-            grid={{ gutter: 16, column: 1 }}
-            dataSource={groupedVideos[category].slice(0, 3)} 
+            grid={{ gutter: 16, column: 3 }}
+            dataSource={filteredVideos}
             renderItem={(video) => (
-              <List.Item>
-                <Card title={video.title} bordered={false} hoverable className="video-card">
+              <List.Item onClick={() => handleVideoSelect(video)}>
+                <Card
+                  title={video.snippet.title}
+                  bordered={false}
+                  hoverable
+                  className="video-card"
+                >
                   <iframe
-                    src={`https://www.youtube.com/embed/${video.videoUrl}`}
+                    src={`https://www.youtube.com/embed/${video.id.videoId}`}
                     allowFullScreen
-                    title={video.title}
+                    title={video.snippet.title}
                     frameBorder="0"
                     width="100%"
                     height="150"
                   />
-                  <p>{video.description.slice(0, 100)}...</p>
+                  <p>{video.snippet.description.slice(0, 100)}...</p>
                 </Card>
               </List.Item>
             )}
           />
+
+          {/* Load More Button */}
+          {nextPageToken && (
+            <div className="load-more-container">
+              <Button type="primary" onClick={handleLoadMore} loading={loading}>
+                Load More Videos
+              </Button>
+            </div>
+          )}
         </div>
-      ))}
+
+        <div className="video-details-section">
+          {selectedVideo && (
+            <>
+              <div className="selected-video">
+                <h3>{selectedVideo.snippet.title}</h3>
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedVideo.id.videoId}`}
+                  allowFullScreen
+                  title={selectedVideo.snippet.title}
+                  frameBorder="0"
+                  width="100%"
+                  height="400"
+                />
+                <p>{selectedVideo.snippet.description}</p>
+              </div>
+              
+              <VideoRating video={selectedVideo} />
+            </>
+          )}
+          
+          <DiscussionBoard 
+            videoId={selectedVideo?.id.videoId} 
+            style={{ marginTop: '20px' }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
 export default EducationModule;
-
-
-// import React, { useState, useEffect, useCallback } from 'react';
-// import axios from 'axios';
-// import { Input, Button, List, Card, Space, Spin, message } from 'antd';
-// import './Educate.css';
-
-// const EducationModule = () => {
-//   const [videos, setVideos] = useState([]);
-//   const [nextPageToken, setNextPageToken] = useState('');
-//   const [searchQuery, setSearchQuery] = useState('');
-//   const [loading, setLoading] = useState(false);
-
-//   const combinedQuery = 'taekwondo|tkd|korean martial arts|kickboxing';
-
-//   const fetchVideos = useCallback(async () => {
-//     setLoading(true); // Show loader
-
-//     try {
-//       const query = searchQuery.trim() !== '' ? `${combinedQuery}|${searchQuery.trim()}` : combinedQuery;
-
-//       const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-//         params: {
-//           part: 'snippet',
-//           maxResults: 10,
-//           q: query,
-//           type: 'video',
-//           key: 'AIzaSyD9KTWtU9xb-T5dVCi3-6n83OHKv5O6yI8',
-//           pageToken: nextPageToken,
-//         },
-//       });
-
-//       setVideos((prevVideos) => [...prevVideos, ...response.data.items]);
-//       setNextPageToken(response.data.nextPageToken || '');
-//     } catch (error) {
-//       message.error('Error fetching videos. Please try again later.');
-//       console.error('Error fetching videos:', error);
-//     } finally {
-//       setLoading(false); // Hide loader
-//     }
-//   }, [nextPageToken, searchQuery]); // Only re-fetch when pageToken or search query changes
-
-//   useEffect(() => {
-//     fetchVideos(); // Initial video load
-//   }, []); // Empty array to run only once when component mounts
-
-//   const handleSearch = () => {
-//     if (searchQuery.trim() !== '') {
-//       setVideos([]); // Clear existing videos
-//       setNextPageToken(''); // Reset next page token
-//       fetchVideos(); // Fetch new videos
-//     }
-//   };
-
-//   const handleInputChange = (event) => {
-//     setSearchQuery(event.target.value);
-//   };
-
-//   const handleLoadMore = () => {
-//     fetchVideos(); // Load more videos when the button is clicked
-//   };
-
-//   return (
-//     <div className="education-container">
-//       <h2 className="education-heading">Taekwondo Educational Videos</h2>
-
-//       <Space direction="vertical" size="middle" className="search-section">
-//         <Input
-//           placeholder="Search martial arts videos"
-//           value={searchQuery}
-//           onChange={handleInputChange}
-//           onPressEnter={handleSearch}
-//           style={{ width: 300 }}
-//         />
-//         <Button type="primary" onClick={handleSearch}>
-//           Search
-//         </Button>
-//       </Space>
-
-//       {/* Display loading spinner while fetching */}
-//       {loading && <Spin size="large" className="loading-spinner" />}
-
-//       {/* Video List */}
-//       <List
-//         grid={{ gutter: 16, column: 3 }}
-//         dataSource={videos}
-//         renderItem={(video) => (
-//           <List.Item>
-//             <Card
-//               title={video.snippet.title}
-//               bordered={false}
-//               hoverable
-//               className="video-card"
-//             >
-//               <iframe
-//                 src={`https://www.youtube.com/embed/${video.id.videoId}`}
-//                 allowFullScreen
-//                 title={video.snippet.title}
-//                 frameBorder="0"
-//                 width="100%"
-//                 height="150"
-//               />
-//               <p>{video.snippet.description.slice(0, 100)}...</p>
-//             </Card>
-//           </List.Item>
-//         )}
-//       />
-
-//       {/* Load More Button */}
-//       {nextPageToken && (
-//         <div className="load-more-container">
-//           <Button type="primary" onClick={handleLoadMore} loading={loading}>
-//             Load More Videos
-//           </Button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default EducationModule;
