@@ -21,10 +21,10 @@ const EducationModule = () => {
 
   const fetchVideos = useCallback(async (reset = false) => {
     setLoading(true);
-    
+
     try {
       let query = searchQuery.trim() !== '' ? `${combinedQuery}|${searchQuery.trim()}` : combinedQuery;
-      
+
       // Add filter to query if not 'all'
       if (filter !== 'all') {
         query += ` ${filter}`;
@@ -58,19 +58,18 @@ const EducationModule = () => {
 
   useEffect(() => {
     fetchVideos(true);
-  }, [filter]); // Refetch when filter changes
+  }, [filter]);
 
   useEffect(() => {
-    // Apply sorting and filtering to videos
-    const filtered = filter === 'all' 
-      ? videos 
+    const filtered = filter === 'all'
+      ? videos
       : videos.filter(video => video.snippet.title.toLowerCase().includes(filter.toLowerCase()));
-    
+
     const sorted = [...filtered].sort((a, b) => {
       if (sort === 'title') return a.snippet.title.localeCompare(b.snippet.title);
       return a.snippet.description.localeCompare(b.snippet.description);
     });
-    
+
     setFilteredVideos(sorted);
   }, [videos, filter, sort]);
 
@@ -94,12 +93,10 @@ const EducationModule = () => {
 
   const handleFilterChange = (value) => {
     setFilter(value);
-    // Videos will be refetched automatically via useEffect
   };
 
   const handleSortChange = (value) => {
     setSort(value);
-    // Sorting is applied in the useEffect
   };
 
   return (
@@ -119,23 +116,31 @@ const EducationModule = () => {
             <Button type="primary" onClick={handleSearch} size="middle" style={{ marginLeft: 0 }}>
               Search
             </Button>
+            <div style={{
+              flex: 1,
+              position: 'sticky',
+              marginTop: '20px',
+              height: 'fitContent'
+            }}>
+              <VideoFilter
+                onFilterChange={handleFilterChange}
+                onSortChange={handleSortChange}
+                currentFilter={filter}
+                currentSort={sort}
+              />
+            </div>
           </Space>
           <VideoUpload />
         </div>
       </div>
 
       <div className="education-content">
-        <div className="video-section">
-          <VideoFilter 
-            onFilterChange={handleFilterChange} 
-            onSortChange={handleSortChange}
-            currentFilter={filter}
-            currentSort={sort}
-          />
-          
+        {/* <div className="video-section"> */}
+
+<div>
           {/* Video List */}
           {loading && <Spin size="large" className="loading-spinner" />}
-          
+
           <List
             grid={{ gutter: 16, column: 3 }}
             dataSource={filteredVideos}
@@ -186,13 +191,13 @@ const EducationModule = () => {
                 />
                 <p>{selectedVideo.snippet.description}</p>
               </div>
-              
+
               <VideoRating video={selectedVideo} />
             </>
           )}
-          
-          <DiscussionBoard 
-            videoId={selectedVideo?.id.videoId} 
+
+          <DiscussionBoard
+            videoId={selectedVideo?.id.videoId}
             style={{ marginTop: '20px' }}
           />
         </div>

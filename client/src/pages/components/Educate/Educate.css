@@ -73,12 +73,12 @@
   flex: 2;
 }
 
-.video-details-section {
+/* .video-details-section {
   flex: 1;
   position: sticky;
   top: 20px;
   height: fit-content;
-}
+} */
 
 .video-filters {
   width: 400px;
