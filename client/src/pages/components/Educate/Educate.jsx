@@ -104,7 +104,13 @@ const EducationModule = () => {
       <div className="education-header">
         <h2>Taekwondo Education Hub</h2>
         <div className="search-upload-section">
-          <Space direction="horizontal" className="search-section">
+          <Space direction="horizontal"  wrap className="search-section">
+          <div style={{
+              flex: 1,
+              backgroundColor:'red',
+              position: 'sticky',
+              height: 'fitContent'
+            }}>
             <Input
               placeholder="Search martial arts videos"
               value={searchQuery}
@@ -116,6 +122,7 @@ const EducationModule = () => {
             <Button type="primary" onClick={handleSearch} size="middle" style={{ marginLeft: 0 }}>
               Search
             </Button>
+            </div>
             <div style={{
               flex: 1,
               position: 'sticky',
@@ -129,10 +136,23 @@ const EducationModule = () => {
                 currentSort={sort}
               />
             </div>
-          </Space>
+            <div style={{
+              flex: 1,
+              position: 'sticky',
+              marginTop: '20px',
+              height: 'fitContent'
+            }}>
+          
           <VideoUpload />
+          </div>
+          </Space>
         </div>
       </div>
+
+      {/* <DiscussionBoard
+            videoId={selectedVideo?.id.videoId}
+            style={{ marginTop: '20px' }}
+          /> */}
 
       <div className="education-content">
         {/* <div className="video-section"> */}
@@ -196,10 +216,7 @@ const EducationModule = () => {
             </>
           )}
 
-          <DiscussionBoard
-            videoId={selectedVideo?.id.videoId}
-            style={{ marginTop: '20px' }}
-          />
+          
         </div>
       </div>
     </div>

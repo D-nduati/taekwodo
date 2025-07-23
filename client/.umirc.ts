@@ -30,8 +30,7 @@ export default defineConfig({
         { path: '/dashboard/educate', component: '@/pages/components/Educate/Educate' },
         { path: '/dashboard/quiz', component: '@/pages/components/Quizes/Quiz' },
         { path: '/dashboard/training', component: '@/pages/components/Training/Training' },
-        { path: '/dashboard/rankings', component: '@/pages/components/Ranking/Ranking' },
-        
+        { path: '/dashboard/rankings', component: '@/pages/components/Ranking/Ranking' },        
         { path: '/dashboard/members', component: '@/pages/components/Members/Members' },
         { path: '/dashboard/settings', component: '@/pages/components/Settings/Settings' },
         { path: '/dashboard/enroll', component: '@/pages/components/Enroll/EnrollWithUs' },

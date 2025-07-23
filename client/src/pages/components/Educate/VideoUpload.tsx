@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Button, message } from 'antd';
+import { Upload, Button, message, Space } from 'antd';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -29,8 +29,10 @@ const VideoUpload = () => {
   };
 
   return (
-    <div>
+    <div className='video-filters' >
+        <Space direction='horizontal' wrap>
       <Upload
+      style={{width:'150px'}}
         beforeUpload={handleBeforeUpload}
         fileList={[]}
       >
@@ -39,12 +41,14 @@ const VideoUpload = () => {
         </Button>
       </Upload>
       <Button
+      style={{width:'150px'}}
         type="primary"
         onClick={handleUpload}
         disabled={uploading || !file}
       >
         {uploading ? 'Uploading...' : 'Upload Video'}
       </Button>
+      </Space>
     </div>
   );
 }

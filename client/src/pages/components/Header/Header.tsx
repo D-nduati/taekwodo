@@ -38,12 +38,12 @@ const AppHeader: React.FC = () => {
         <Menu.Item key="6">
           <Link to="/dashboard/profile">Profile</Link>
         </Menu.Item>
-        <Menu.Item key="6" style={{ marginLeft: 'auto' }}>
+        <Menu.Item key="7" style={{ marginLeft: 'auto' }}>
           <Badge count={5}>
             <Avatar shape="square" size="small" />
           </Badge>
         </Menu.Item>
-        <Menu.Item  key="7">
+        <Menu.Item  key="8">
 
           <Button
             type="link"

@@ -20,10 +20,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user, children }) => {
 
   return (
     <Layout style={{ backgroundColor: '#6482AD' }}>
-      <Sider style={{ backgroundColor: '#6482AD', marginTop: '3px' }}>
+      <Sider style={{ backgroundColor: '#6482AD', marginTop: '3px' ,overflow: 'auto',
+  height: '100vh',
+  position: 'sticky',
+  // insetInlineStart: 0,
+  top: 0,
+  bottom: 0,
+  // scrollbarWidth: 'thin',
+  // scrollbarGutter: 'stable',
+  }} collapsible= {true} >
       <div style={{display:"flex",justifyContent:'center'}}>
        <img height={110} src={Logo} style={{borderRadius:'50%'}} />
-       {/* <p>More Than Kicks</p> */}
        </div>
         <Menu
           style={{ backgroundColor: '#6482AD' }}
