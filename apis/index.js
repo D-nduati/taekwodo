@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+require('dotenv').config();
+
 // const mongoose = require("mongoose");
 const TokenRoute = require("./Routes/token")
 
@@ -7,6 +9,7 @@ const app = express();
 // require("dotenv").config();
 app.use(express.json());
 app.use(cors());
+
 
 
 const {usersroute} = require('./Routes/Logins');
@@ -44,6 +47,14 @@ app.use('/profile',ProfileRoute);
 app.use('/quiz',clientQuiz);
 app.use('/ranks',Ranking);
 
+app.use('*/*',(req,res)=>{
+  res.status(200).json({
+    message:'The route does not exist',
+    status:'0'    
+  })
+})
+
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -52,9 +63,6 @@ app.use((err, req, res, next) => {
 
 
 
-// app.listen(process.env.PORT, () => {
-//   console.log(`Server running on port ${process.env.PORT}`);
-// });
-app.listen(5000, () => {
-  console.log(`Server running on port 5000`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });

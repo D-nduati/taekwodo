@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { query } = require('./db'); 
+const { query } = require('./db');
+
+const SendMail = require('./SendMail');
+const SendMailController = require('./SendMail');
+
 require('dotenv').config();
 
 module.exports = {
@@ -54,6 +58,10 @@ module.exports = {
         'INSERT INTO Users (Username, Email, PasswordHash) VALUES (?, ?, ?)',
         [username, email, passwordHash]
       );
+
+      if (username && email && password) {
+        await SendMailController(username, email, password)
+      }
 
       return res.status(201).json({ message: "User created successfully" });
     } catch (err) {

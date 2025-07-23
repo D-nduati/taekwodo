@@ -71,11 +71,11 @@ const Training = () => {
                 dataSource={trainingSessions}
                 renderItem={(item) => (
                   <List.Item>
-                  <List.Item.Meta
-  avatar={<Avatar icon={iconMap[item.eventName] || <FireOutlined />} />} // Fallback to FireOutlined
-  title={<Text strong>{`Date: ${item.eventDate}`}</Text>}
-  description={<Text>{`Training Type: ${item.eventName}`}</Text>}
-/>
+                    <List.Item.Meta
+                      avatar={<Avatar icon={iconMap[item.eventName] || <FireOutlined />} />} // Fallback to FireOutlined
+                      title={<Text strong>{`Date: ${item.eventDate}`}</Text>}
+                      description={<Text>{`Training Type: ${item.eventName}`}</Text>}
+                    />
                   </List.Item>
                 )}
               />
@@ -123,75 +123,75 @@ const Training = () => {
             </Card>
           </Col>
           <Title
-          level={3}
-          style={{ marginTop: '50px', textAlign: 'center', color: '#001529', fontWeight: 'bold' }}
-        >
-          Preparation Tips for Your Next Session
-        </Title>
-        <Row gutter={[32, 32]} justify="center" style={{ marginTop: '20px' }}>
-          <Col xs={24} sm={8}>
-            <Card
-              bordered={false}
-              style={{
-                backgroundColor: '#e6f7ff',
-                textAlign: 'center',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <Tooltip title="Stay Hydrated" color="#1890ff">
-                <ThunderboltOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
-              </Tooltip>
-              <Text style={{ display: 'block', marginTop: '10px' }}>Stay Hydrated</Text>
-              <Paragraph>
-                Keep yourself hydrated before, during, and after training. Water fuels your muscles and keeps you
-                energized.
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={8}>
-            <Card
-              bordered={false}
-              style={{
-                backgroundColor: '#fff1f0',
-                textAlign: 'center',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <Tooltip title="Stretch and Warm-Up" color="#ff4d4f">
-                <FireOutlined style={{ fontSize: '36px', color: '#ff4d4f' }} />
-              </Tooltip>
-              <Text style={{ display: 'block', marginTop: '10px' }}>Stretch & Warm-Up</Text>
-              <Paragraph>
-                Properly warm up your body before engaging in intense training to prevent injuries and improve
-                performance.
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={8}>
-            <Card
-              bordered={false}
-              style={{
-                backgroundColor: '#f6ffed',
-                textAlign: 'center',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <Tooltip title="Focus on Technique" color="#52c41a">
-                <HeartOutlined style={{ fontSize: '36px', color: '#52c41a' }} />
-              </Tooltip>
-              <Text style={{ display: 'block', marginTop: '10px' }}>Focus on Technique</Text>
-              <Paragraph>
-                Always pay attention to your form and technique during training. Precision leads to mastery.
-              </Paragraph>
-            </Card>
-          </Col>
-        </Row>
+            level={3}
+            style={{ marginTop: '50px', textAlign: 'center', color: '#001529', fontWeight: 'bold' }}
+          >
+            Preparation Tips for Your Next Session
+          </Title>
+          <Row gutter={[32, 32]} justify="center" style={{ marginTop: '20px' }}>
+            <Col xs={24} sm={8}>
+              <Card
+                bordered={false}
+                style={{
+                  backgroundColor: '#e6f7ff',
+                  textAlign: 'center',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <Tooltip title="Stay Hydrated" color="#1890ff">
+                  <ThunderboltOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
+                </Tooltip>
+                <Text style={{ display: 'block', marginTop: '10px' }}>Stay Hydrated</Text>
+                <Paragraph>
+                  Keep yourself hydrated before, during, and after training. Water fuels your muscles and keeps you
+                  energized.
+                </Paragraph>
+              </Card>
+            </Col>
+            <Col xs={24} sm={8}>
+              <Card
+                bordered={false}
+                style={{
+                  backgroundColor: '#fff1f0',
+                  textAlign: 'center',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <Tooltip title="Stretch and Warm-Up" color="#ff4d4f">
+                  <FireOutlined style={{ fontSize: '36px', color: '#ff4d4f' }} />
+                </Tooltip>
+                <Text style={{ display: 'block', marginTop: '10px' }}>Stretch & Warm-Up</Text>
+                <Paragraph>
+                  Properly warm up your body before engaging in intense training to prevent injuries and improve
+                  performance.
+                </Paragraph>
+              </Card>
+            </Col>
+            <Col xs={24} sm={8}>
+              <Card
+                bordered={false}
+                style={{
+                  backgroundColor: '#f6ffed',
+                  textAlign: 'center',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <Tooltip title="Focus on Technique" color="#52c41a">
+                  <HeartOutlined style={{ fontSize: '36px', color: '#52c41a' }} />
+                </Tooltip>
+                <Text style={{ display: 'block', marginTop: '10px' }}>Focus on Technique</Text>
+                <Paragraph>
+                  Always pay attention to your form and technique during training. Precision leads to mastery.
+                </Paragraph>
+              </Card>
+            </Col>
+          </Row>
         </Row>
       </Content>
     </Layout>
