@@ -3,6 +3,7 @@ import { useSpring, animated } from 'react-spring';
 import { Card, Divider, Spin, Alert, Typography, Input, Button, Form, Layout, message } from 'antd';
 import { history } from 'umi';
 import axios from 'axios';
+import './Login.css';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -77,15 +78,20 @@ function AuthForm() {
   };
 
   return (
-    <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'RGB(170 187 204)' }}>
-      <animated.div style={fadeIn}>
+    <Content className='custom-content'>
+
+<div className="background-layer" />
+     <animated.div style={fadeIn}>
         <Card
           style={{
             maxWidth: '100%',
             borderRadius: '10px',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            background: 'RGB(170 187 204)',
+            background: 'linear-gradient(90deg, #00c6ff, #0072ff)',
+            position: 'relative',
+            zIndex:1,
             overflow: 'hidden',
+            opacity:'0.9'
           }}
         >
           <Typography>
@@ -171,6 +177,7 @@ function AuthForm() {
           )}
         </Card>
       </animated.div>
+     
     </Content>
   );
 }
