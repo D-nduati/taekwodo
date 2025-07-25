@@ -1,4 +1,4 @@
-import React, { useState ,useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { Card, Divider, Spin, Alert, Typography, Input, Button, Form, Layout, message } from 'antd';
 import { history } from 'umi';
@@ -79,11 +79,9 @@ function AuthForm() {
 
   return (
     <Content className='custom-content'>
-
-<div className="background-layer" />
-     <animated.div style={fadeIn}>
-        <Card
-          style={{
+      <div className="background-layer" />
+      <animated.div style={fadeIn}>
+        <Card   style={{
             maxWidth: '100%',
             borderRadius: '10px',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
@@ -92,10 +90,9 @@ function AuthForm() {
             zIndex:1,
             overflow: 'hidden',
             opacity:'0.9'
-          }}
-        >
+          }}>
           <Typography>
-            <Title style={{ color: '#ff7e5f', textAlign: 'center' }}>
+            <Title className='titleStyle' >
               {formType === FormType.LOGIN ? 'Login' : formType === FormType.SIGNUP ? 'Sign Up' : 'Forgot Password'}
             </Title>
           </Typography>
@@ -112,7 +109,7 @@ function AuthForm() {
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Enter Your Username"
-                    style={{ width: '100%', borderRadius: '8px' }}
+                    className='input'
                   />
                 </Form.Item>
               )}
@@ -123,7 +120,8 @@ function AuthForm() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter Your Email"
-                  style={{ width: '100%', borderRadius: '8px' }}
+                  className='input'
+
                 />
               </Form.Item>
               {formType !== FormType.FORGOT_PASSWORD && (
@@ -134,7 +132,7 @@ function AuthForm() {
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Enter Your Password"
-                    style={{ width: '100%', borderRadius: '8px' }}
+                    className='input'
                   />
                 </Form.Item>
               )}
@@ -177,7 +175,7 @@ function AuthForm() {
           )}
         </Card>
       </animated.div>
-     
+
     </Content>
   );
 }

@@ -1,26 +1,46 @@
 .custom-content {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    min-height: 100vh;
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-    overflow: hidden;
-  }
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  min-height: 100vh;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  overflow: hidden;
+}
+
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../../../assets/backgroundImage.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.8;
+  z-index: 0;
+}
+
+.cardlogin {
+  max-width: '100%';
+  border-Radius: '10px';
+  box-shadow: '0 4px 8px rgba(0, 0, 0, 0.2)';
+  background: 'linear-gradient(90deg, #00c6ff, #0072ff)';
+  position: 'relative';
+  z-index: 1;
+  overflow: 'hidden';
+  opacity: '0.9';
+
+}
+
+.titleStyle {
+  color: '#ff7e5f';
+  text-align: 'center';
+}
+
+input {
+  width: '100%';
+   border-radius: '8px' ;
   
-  .background-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../../../../assets/backgroundImage.jpeg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0.8; 
-    z-index: 0;
-  }
-  
- 
-  
+}
