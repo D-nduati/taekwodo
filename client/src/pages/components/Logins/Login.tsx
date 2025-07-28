@@ -37,7 +37,7 @@ function AuthForm() {
           url = 'http://localhost:5000/user/signup';
           break;
         case FormType.FORGOT_PASSWORD:
-          url = 'http://localhost:5000/user/forgot-password';
+          url = 'http://localhost:5000/user/forgot';
           break;
         default:
           throw new Error('Invalid form type');
@@ -52,7 +52,12 @@ function AuthForm() {
       const data = response.data;
       localStorage.setItem('token', data.token);
       message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
-      history.push('/dashboard');
+      if (formType !== FormType.FORGOT_PASSWORD) {
+        history.push('/login');
+      } else {
+        history.push('/dashboard/home');
+      }
+
 
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.message) {
@@ -81,16 +86,16 @@ function AuthForm() {
     <Content className='custom-content'>
       <div className="background-layer" />
       <animated.div style={fadeIn}>
-        <Card   style={{
-            maxWidth: '100%',
-            borderRadius: '10px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            background: 'linear-gradient(90deg, #00c6ff, #0072ff)',
-            position: 'relative',
-            zIndex:1,
-            overflow: 'hidden',
-            opacity:'0.9'
-          }}>
+        <Card style={{
+          maxWidth: '100%',
+          borderRadius: '10px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          background: 'linear-gradient(90deg, #00c6ff, #0072ff)',
+          position: 'relative',
+          zIndex: 1,
+          overflow: 'hidden',
+          opacity: '0.9'
+        }}>
           <Typography>
             <Title className='titleStyle' >
               {formType === FormType.LOGIN ? 'Login' : formType === FormType.SIGNUP ? 'Sign Up' : 'Forgot Password'}

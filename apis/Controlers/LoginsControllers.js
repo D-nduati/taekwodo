@@ -2,8 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { query } = require('./db');
 
-const SendMail = require('./SendMail');
-const SendMailController = require('./SendMail');
+const { SendMailController, ForgotPasswordEmail } = require('./SendMail');
+
 
 require('dotenv').config();
 
@@ -86,6 +86,11 @@ module.exports = {
         return res.status(400).json({ message: "Invalid old password" });
       }
 
+      const isSamePassword = bcrypt.compareSync(newPassword, user.PasswordHash);
+      if (isSamePassword) {
+        return res.status(400).json({ message: "New password cannot be the same as the old password." });
+      }
+
       const salt = bcrypt.genSaltSync(10);
       const newHash = bcrypt.hashSync(newPassword, salt);
 
@@ -96,5 +101,47 @@ module.exports = {
       console.error(err);
       return res.status(500).json({ message: "Server error", error: err.message });
     }
+  },
+
+
+
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+
+    try {
+      const results = await query('SELECT * FROM Users WHERE Email = ?', [email]);
+      const user = results[0];
+
+      if (!user) {
+        return res.status(400).json({ message: "Email not found" });
+      }
+
+      function generatePassword(length = 10) {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+          password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return password;
+      }
+
+      const tempPassword = generatePassword(12);
+      const salt = bcrypt.genSaltSync(10);
+      const newHash = bcrypt.hashSync(tempPassword, salt);
+
+      const result = await query('UPDATE Users SET PasswordHash = ? WHERE Email = ?', [newHash, email]);
+
+      if (result.affectedRows === 0) {
+        return res.status(400).json({ message: "Failed to update password." });
+      }
+      await ForgotPasswordEmail(email, tempPassword);
+
+      return res.status(200).json({ message: "Password reset email sent" });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error", error: err.message });
+    }
   }
+
 };
