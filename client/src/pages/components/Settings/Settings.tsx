@@ -12,25 +12,50 @@ const Settings: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>('/default-avatar.png'); 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  
-  const handleAvatarUpload = async (info: any) => {
-    if (info.file.status === 'done') {
-      try {
-        const formData = new FormData();
-        formData.append('avatar', info.file.originFileObj);
-        const response = await axios.post('/api/user/avatar', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
 
-        setAvatarUrl(response.data.avatarUrl);  
-        message.success('Avatar updated successfully');
-      } catch (error) {
-        message.error('Error uploading avatar');
-      }
+  const handleAvatarUpload = async (info: any) => {
+    const file = info.file.originFileObj;
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'TaekwondoProfile'); 
+  
+    try {
+      const res = await axios.post('https://api.cloudinary.com/v1_1/ducxikbwl/image/upload', formData);
+  
+      const imageUrl = res.data.secure_url;
+      setAvatarUrl(imageUrl); 
+      message.success('Image uploaded to Cloudinary');
+  
+      await axios.put('/api/user/avatar', { avatarUrl: imageUrl });
+      message.success('Avatar saved to profile');
+  
+    } catch (error) {
+      console.error(error);
+      message.error('Avatar upload failed');
     }
   };
+  
+  
+  // const handleAvatarUpload = async (info: any) => {
+  //   if (info.file.status === 'done') {
+  //     try {
+  //       const formData = new FormData();
+  //       formData.append('avatar', info.file.originFileObj);
+  //       const response = await axios.post('/api/user/avatar', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+  //       setAvatarUrl(response.data.avatarUrl);  
+  //       message.success('Avatar updated successfully');
+  //     } catch (error) {
+  //       message.error('Error uploading avatar');
+  //     }
+  //   }
+  // };
 
  
   const showAvatarModal = () => setIsModalVisible(true);

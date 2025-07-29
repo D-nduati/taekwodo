@@ -5,7 +5,7 @@ module.exports = {
   GetProfileData: async (req, res) => {
     try {
       const { userId } = req.params;
-      const result = await query(`SELECT * FROM Profiles WHERE UserId = ?`, [userId]);
+      const result = await query(`SELECT * FROM Profiles WHERE UserId = ?`, [31]);
   
       if (result.length > 0) {
         const profile = result[0];

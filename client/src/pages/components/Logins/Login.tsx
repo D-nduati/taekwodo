@@ -51,12 +51,16 @@ function AuthForm() {
 
       const data = response.data;
       localStorage.setItem('token', data.token);
+      localStorage.setItem('userId',data.userId)
+
       message.success(`${formType.charAt(0).toUpperCase() + formType.slice(1)} successful!`);
-      if (formType !== FormType.FORGOT_PASSWORD) {
-        history.push('/login');
-      } else {
+      
+      if (formType === FormType.LOGIN || formType === FormType.SIGNUP) {
         history.push('/dashboard/home');
+      } else if (formType === FormType.FORGOT_PASSWORD) {
+        history.push('/login');
       }
+      
 
 
     } catch (err: any) {

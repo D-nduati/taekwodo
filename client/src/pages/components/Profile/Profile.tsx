@@ -9,12 +9,12 @@ const { Title, Text } = Typography;
 const Profile: React.FC = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const userId = localStorage.getItem('userId')
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/profile/getProfileData/3');
+        const response = await axios.get(`http://localhost:5000/profile/getProfileData/${userId}`);
   
         const profile = response.data[0];
   
