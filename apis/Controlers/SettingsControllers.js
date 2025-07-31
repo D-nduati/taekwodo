@@ -1,7 +1,6 @@
 const { query } = require('./db');
 
 module.exports = {
-  // Get user settings by ID
   GetUserSettings: async (req, res) => {
     const { userId } = req.params;
 
@@ -21,6 +20,8 @@ module.exports = {
   // Update user settings
   UpdateUserSettings: async (req, res) => {
     const { userId } = req.params;
+
+
     const {
       username,
       email,
@@ -33,37 +34,67 @@ module.exports = {
     } = req.body;
 
     try {
-      const result = await query(
-        `UPDATE UserSettings 
-         SET
-         UserId = ?, 
-         Username = ?, 
-             Email = ?, 
-             PasswordHash = ?, 
-             ReceiveEmails = ?, 
-             ReceiveNotifications = ?, 
-             Theme = ?, 
-             TwoFactorAuth = ?, 
-             AvatarUrl = ?
-         WHERE UserID = ?`,
-        [userId,
-          username,
-          email,
-          passwordHash,
-          receiveEmails,
-          receiveNotifications,
-          theme,
-          twoFactorAuth,
-          avatarUrl,
-          userId,
-        ]
-      );
+      const [rows] = await query('SELECT * FROM UserSettings WHERE UserID = ?', [userId]);
 
-      if (result.affectedRows > 0) {
-        res.json({ success: 'ok', message: 'User settings updated successfully' });
+      if (rows.length > 0) {
+        // Record exists — update it
+        const result = await query(
+          `UPDATE UserSettings SET
+        Username = ?, 
+        Email = ?, 
+        PasswordHash = ?, 
+        ReceiveEmails = ?, 
+        ReceiveNotifications = ?, 
+        Theme = ?, 
+        TwoFactorAuth = ?, 
+        AvatarUrl = ?
+     WHERE UserID = ?`,
+          [
+            username,
+            email,
+            passwordHash,
+            receiveEmails,
+            receiveNotifications,
+            theme,
+            twoFactorAuth,
+            avatarUrl,
+            userId,
+          ]
+        );
+
+        if (result.affectedRows > 0) {
+          res.json({ success: 'ok', message: 'User settings updated successfully', results: [result] });
+        } else {
+          res.status(304).json({ message: 'User settings not found', results: [result] });
+        }
       } else {
-        res.status(304).json({ message: 'User settings not found', results: [result] });
+
+        const result = await query(
+          `INSERT INTO UserSettings (
+        UserID, Username, Email, PasswordHash, 
+        ReceiveEmails, ReceiveNotifications, Theme, 
+        TwoFactorAuth, AvatarUrl
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            userId,
+            username,
+            email,
+            passwordHash,
+            receiveEmails,
+            receiveNotifications,
+            theme,
+            twoFactorAuth,
+            avatarUrl,
+          ]
+        );
+
+        if (result.affectedRows > 0) {
+          res.json({ success: 'ok', message: 'User settings updated successfully',results: [result]  });
+        } else {
+          res.status(304).json({ message: 'User settings not found', results: [result] });
+        }
       }
+
     } catch (err) {
       res.status(500).json({ message: 'Error updating user settings', error: err.message });
     }

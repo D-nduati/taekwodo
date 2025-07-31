@@ -11,6 +11,7 @@ const Settings: React.FC = () => {
   const [form] = Form.useForm();
   const [avatarUrl, setAvatarUrl] = useState<string | null>('/default-avatar.png'); 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const userId = localStorage.getItem('userId')
 
 
   const handleAvatarUpload = async (info: any) => {
@@ -28,7 +29,7 @@ const Settings: React.FC = () => {
       setAvatarUrl(imageUrl); 
       message.success('Image uploaded to Cloudinary');
   
-      await axios.put('/api/user/avatar', { avatarUrl: imageUrl });
+      await axios.post(`http://localhost:5000/settings/settings/${userId}`, { avatarUrl: imageUrl });
       message.success('Avatar saved to profile');
   
     } catch (error) {
@@ -37,26 +38,6 @@ const Settings: React.FC = () => {
     }
   };
   
-  
-  // const handleAvatarUpload = async (info: any) => {
-  //   if (info.file.status === 'done') {
-  //     try {
-  //       const formData = new FormData();
-  //       formData.append('avatar', info.file.originFileObj);
-  //       const response = await axios.post('/api/user/avatar', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       setAvatarUrl(response.data.avatarUrl);  
-  //       message.success('Avatar updated successfully');
-  //     } catch (error) {
-  //       message.error('Error uploading avatar');
-  //     }
-  //   }
-  // };
-
  
   const showAvatarModal = () => setIsModalVisible(true);
   const handleAvatarChange = () => {
@@ -68,7 +49,7 @@ const Settings: React.FC = () => {
   
   const handleFormSubmit = async (values: any) => {
     try {
-      await axios.put('/api/user/settings', values);
+      await axios.post(`http://localhost:5000/settings/settings/${userId}`, values);
       message.success('Settings updated');
     } catch (error) {
       message.error('Error updating settings');
@@ -161,7 +142,7 @@ const Settings: React.FC = () => {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="save-btn">
+              <Button type="primary" htmlType="submit" className="save-btn" size='small'>
                 Save Settings
               </Button>
             </Form.Item>

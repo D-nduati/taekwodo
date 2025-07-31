@@ -48,14 +48,12 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const { username, role, avatarUrl, achievements = [], skills = [] } = profileData;
 
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '40px 0' }}>
+    {loading && <div>loading ...</div>}
       <div className="profile-container" style={{ maxWidth: 800, margin: 'auto', backgroundColor: '#fff', borderRadius: 16, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
         
      
