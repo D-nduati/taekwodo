@@ -1,26 +1,30 @@
-const { query } = require('./db');
+const { query } = require("./db");
 
 module.exports = {
   GetUserSettings: async (req, res) => {
     const { userId } = req.params;
 
     try {
-      const result = await query(`SELECT * FROM UserSettings WHERE UserID = ?`, [userId]);
+      const result = await query(
+        `SELECT * FROM UserSettings WHERE UserID = ?`,
+        [userId]
+      );
 
       if (result.length > 0) {
-        res.json(result[0]);
+        res.status(200).json(result[0]);
       } else {
         res.status(304).json({ message: "No settings Yet" });
       }
     } catch (err) {
-      res.status(500).json({ message: 'Error fetching user settings', error: err.message });
+      res
+        .status(500)
+        .json({ message: "Error fetching user settings", error: err.message });
     }
   },
 
   // Update user settings
   UpdateUserSettings: async (req, res) => {
     const { userId } = req.params;
-
 
     const {
       username,
@@ -34,8 +38,11 @@ module.exports = {
     } = req.body;
 
     try {
-      const [rows] = await query('SELECT * FROM UserSettings WHERE UserID = ?', [userId]);
-
+      const rows = await query(
+        "SELECT * FROM UserSettings WHERE UserID = ?",
+        [userId]
+      );
+     
       if (rows.length > 0) {
         // Record exists — update it
         const result = await query(
@@ -61,14 +68,18 @@ module.exports = {
             userId,
           ]
         );
-
         if (result.affectedRows > 0) {
-          res.json({ success: 'ok', message: 'User settings updated successfully', results: [result] });
+          res.json({
+            success: "ok",
+            message: "User settings updated successfully",
+            results: [result],
+          });
         } else {
-          res.status(304).json({ message: 'User settings not found', results: [result] });
+          res
+            .status(304)
+            .json({ message: "User settings not found", results: [result] });
         }
       } else {
-
         const result = await query(
           `INSERT INTO UserSettings (
         UserID, Username, Email, PasswordHash, 
@@ -89,14 +100,21 @@ module.exports = {
         );
 
         if (result.affectedRows > 0) {
-          res.json({ success: 'ok', message: 'User settings updated successfully',results: [result]  });
+          res.json({
+            success: "ok",
+            message: "User settings updated successfully",
+            results: [result],
+          });
         } else {
-          res.status(304).json({ message: 'User settings not found', results: [result] });
+          res
+            .status(304)
+            .json({ message: "User settings not found", results: [result] });
         }
       }
-
     } catch (err) {
-      res.status(500).json({ message: 'Error updating user settings', error: err.message });
+      res
+        .status(500)
+        .json({ message: "Error updating user settings", error: err.message });
     }
   },
 
@@ -107,17 +125,20 @@ module.exports = {
 
     try {
       const result = await query(
-        `UPDATE UserSettings SET AvatarUrl = ? WHERE UserID = ?`,
+        
+        `UPDATE UserSettings SET AvatarUrl = ? WHERE UserID = ? `,
         [avatarUrl, userId]
       );
 
       if (result.affectedRows > 0) {
-        res.json({ message: 'Avatar updated successfully' });
+        res.json({ message: "Avatar updated successfully" ,result:result});
       } else {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ message: "User not found" });
       }
     } catch (err) {
-      res.status(500).json({ message: 'Error updating avatar', error: err.message });
+      res
+        .status(500)
+        .json({ message: "Error updating avatar", error: err.message });
     }
   },
 
@@ -134,14 +155,17 @@ module.exports = {
 
       if (result.affectedRows > 0) {
         res.json({
-          message: `Two-Factor Authentication ${twoFactorAuth ? 'enabled' : 'disabled'
-            } successfully`,
+          message: `Two-Factor Authentication ${
+            twoFactorAuth ? "enabled" : "disabled"
+          } successfully`,
         });
       } else {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ message: "User not found" });
       }
     } catch (err) {
-      res.status(500).json({ message: 'Error toggling 2FA', error: err.message });
+      res
+        .status(500)
+        .json({ message: "Error toggling 2FA", error: err.message });
     }
   },
 };

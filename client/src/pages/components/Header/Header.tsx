@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu, Button, Avatar, Row, Col, Badge } from 'antd';
+import { Layout, Menu, Button, Avatar, Row, Col, Badge, message } from 'antd';
 import { Link } from 'umi';
 import { LogoutOutlined } from '@ant-design/icons';
 import { history } from 'umi';
@@ -7,14 +7,22 @@ import { history } from 'umi';
 const { Header } = Layout;
 
 const handleLogout = () => {
-  history.push('/');
+  try {
+    localStorage.setItem('token', '');
+    localStorage.setItem('userId','');
+    history.push('/');
+  } catch (error) {
+    message.info("An error Occured");
+    console.log(error)
+  }
+  
 };
 
 const AppHeader: React.FC = () => {
   return (
     <Header style={{ padding: '0', backgroundColor: '#00c6ff' }}>
       <Menu
-        // theme="light"
+        theme="light"
         mode="horizontal"
         defaultSelectedKeys={['1']}
         style={{ width: '100%' ,backgroundColor: '#00c6ff'}}

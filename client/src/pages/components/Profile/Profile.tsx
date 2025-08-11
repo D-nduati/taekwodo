@@ -49,7 +49,16 @@ const Profile: React.FC = () => {
   };
 
 
+  if (loading || !profileData) {
+    return <Layout style={{ minHeight: '100vh', padding: '40px 0' }}>
+      <div style={{ textAlign: 'center', marginTop: '20%' }}>
+        <Text>Loading...</Text>
+      </div>
+    </Layout>;
+  }
+  
   const { username, role, avatarUrl, achievements = [], skills = [] } = profileData;
+  
 
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '40px 0' }}>
@@ -63,7 +72,7 @@ const Profile: React.FC = () => {
             <Title level={2} style={{ color: '#fff' }}>{username}</Title>
             <Text type="secondary" style={{ color: '#fff' }}>{role}</Text>
           </div>
-          <Button shape="circle" icon={<EditOutlined />} style={{ position: 'absolute', top: 20, right: 20, color: '#fff', borderColor: '#fff' }} />
+          {/* <Button shape="circle" icon={<EditOutlined />} style={{ position: 'absolute', top: 20, right: 20, color: '#fff', borderColor: '#fff' }} /> */}
         </div>
         
        

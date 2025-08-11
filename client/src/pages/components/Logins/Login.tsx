@@ -135,7 +135,7 @@ function AuthForm() {
               </Form.Item>
               {formType !== FormType.FORGOT_PASSWORD && (
                 <Form.Item>
-                  <Input
+                  <Input.Password
                     type="password"
                     name="password"
                     value={formData.password}
