@@ -52,8 +52,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, children }) => {
 
       <Layout>
         <AppHeader />
+        {/* <Content>{children}</Content> */}
 
-        <Content style={{ padding: '20px' }}>{children}</Content>
+        <Content style={{ padding: '5px' }}>{children}</Content>
 
         <Footer style={{ textAlign: 'center' }}>
           Taekwondo App ©2025 Created by Samuel Ngigi
