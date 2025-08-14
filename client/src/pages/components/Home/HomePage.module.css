@@ -1,4 +1,258 @@
-.container {
+/* Global Styles */
+:global(body) {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+/* Hero Section */
+.heroContainer {
+  position: relative;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.carousel {
+  height: 100%;
+}
+
+.carouselSlide {
+  position: relative;
+  height: 80vh;
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+
+.carouselOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  width: 80%;
+  max-width: 800px;
+}
+
+.heroTitle {
+  color: white !important;
+  font-size: 3.5rem !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem !important;
+}
+
+.heroSubtitle {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ctaButton {
+  background: #ff6b35 !important;
+  border-color: #ff6b35 !important;
+  height: 50px;
+  padding: 0 30px;
+  font-weight: 600;
+}
+
+.secondaryButton {
+  background: transparent !important;
+  border-color: white !important;
+  color: white !important;
+  height: 50px;
+  padding: 0 30px;
+  font-weight: 600;
+}
+
+/* About Section */
+.aboutContainer {
+  padding: 80px 0;
+  background: white;
+}
+
+.aboutContent {
+  padding: 0 40px;
+}
+
+.aboutText {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.aboutImageContainer {
+  padding: 20px;
+}
+
+.aboutImage {
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Features Section */
+.featuresContainer {
+  padding: 80px 0;
+  background: #f8fafc;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.sectionTitle {
+  color: #2d3748 !important;
+  margin-bottom: 1rem !important;
+}
+
+.sectionSubtitle {
+  color: #718096;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.featureCard {
+  height: 100%;
+  text-align: center;
+  border-radius: 12px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.featureIconContainer {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #4299e1;
+}
+
+.featureTitle {
+  color: #2d3748 !important;
+  margin-bottom: 1rem !important;
+}
+
+.featureDescription {
+  color: #4a5568;
+}
+
+/* Testimonials Section */
+.testimonialsContainer {
+  padding: 80px 0;
+  background: white;
+}
+
+.testimonialCard {
+  height: 100%;
+  border-radius: 12px !important;
+  position: relative;
+  padding: 30px;
+}
+
+.quoteIcon {
+  font-size: 2rem;
+  color: #e2e8f0;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.testimonialText {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  font-style: italic;
+  margin-bottom: 2rem !important;
+}
+
+.testimonialAuthor {
+  display: flex;
+  align-items: center;
+}
+
+.authorInfo {
+  margin-left: 15px;
+}
+
+.authorName {
+  margin-bottom: 0.2rem !important;
+  font-size: 1.1rem;
+}
+
+.authorRole {
+  color: #718096;
+  margin-bottom: 0 !important;
+}
+
+/* CTA Section */
+.ctaContainer {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  text-align: center;
+  color: white;
+}
+
+.ctaContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.ctaTitle {
+  color: white !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.ctaText {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem !important;
+  max-width: 600px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.primaryCta {
+  background: #ff6b35 !important;
+  border-color: #ff6b35 !important;
+  height: 50px;
+  padding: 0 40px;
+  font-weight: 600;
+}
+
+.secondaryCta {
+  background: transparent !important;
+  border-color: white !important;
+  color: white !important;
+  height: 50px;
+  padding: 0 40px;
+  font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem !important;
+  }
+  
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  
+  .aboutContent {
+    padding: 0 20px;
+    margin-bottom: 30px;
+  }
+}
+/* .container {
   font-family: 'Poppins', sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #ff4d4d, #ff9933);
@@ -60,4 +314,4 @@
 
 .call-to-action button:hover {
   transform: scale(1.1);
-}
+} */
