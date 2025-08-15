@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, Button, Upload, List, Avatar, Comment, Tooltip } from 'antd';
-import { UploadOutlined, LikeOutlined, LikeFilled, MessageOutlined } from '@ant-design/icons';
+import {
+  Card,
+  Input,
+  Button,
+  Upload,
+  List,
+  Avatar,
+  Comment,
+  message,
+  Tooltip,
+} from 'antd';
+import {
+  UploadOutlined,
+  LikeOutlined,
+  LikeFilled,
+  MessageOutlined,
+} from '@ant-design/icons';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -14,22 +29,26 @@ interface Post {
   videoUrl?: string | null;
   likes: number;
   comments: { author: string; content: string }[];
-  timestamp: string; 
+  timestamp: string;
   CreatedAt: string;
 }
 
 const Members: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
-  const [newCommentContent, setNewCommentContent] = useState<{ [key: string]: string }>({});
+  const [newCommentContent, setNewCommentContent] = useState<{
+    [key: string]: string;
+  }>({});
   const [imageFile, setImageFile] = useState<any | null>(null);
   const [videoFile, setVideoFile] = useState<any | null>(null);
+  const user = localStorage.getItem('userId');
 
-  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/members/getposts');
+        const response = await axios.get(
+          'http://localhost:5000/members/getposts',
+        );
         const normalizedPosts = response.data.map((post: any) => ({
           id: post.Id,
           author: post.Author,
@@ -39,49 +58,61 @@ const Members: React.FC = () => {
           likes: post.Likes,
           comments: post.comments || [],
           CreatedAt: post.CreatedAt,
-          timestamp: post.CreatedAt, 
+          timestamp: post.CreatedAt,
         }));
         setPosts(normalizedPosts);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
     };
-  
+
     fetchPosts();
   }, []);
-  
-  
-  
 
   const handleLikePost = async (postId: string) => {
-    const updatedPosts = posts.map(post =>
-      post.id === postId ? { ...post, likes: post.likes + 1 } : post
+    const updatedPosts = posts.map((post) =>
+      post.id === postId ? { ...post, likes: post.likes + 1 } : post,
     );
     setPosts(updatedPosts);
-  
+
     try {
-      await axios.put(`http://localhost:5000/members/likePost${postId}/like`, { likedBy: 'You' });
+      if (user === undefined || user === '' || user === null) return;
+      console.log(user)
+      const res = await axios.put(
+        `http://localhost:5000/members/likePost//like/${postId}`,
+        { likedBy: user },
+      );
+      if (res.status !== 200) {
+        message.info('Could Not Like the Post');
+      }
     } catch (error) {
       console.error('Error liking post:', error);
     }
   };
-  
 
-  
   const handleAddComment = async (postId: string) => {
     if (newCommentContent[postId]) {
       try {
-        await axios.post(`http://localhost:5000/members//addComment/${postId}/comment`, {
-          author: 'You',
-          content: newCommentContent[postId],
-        });
-  
-        setPosts(prevPosts =>
-          prevPosts.map(post =>
+        await axios.post(
+          `http://localhost:5000/members//addComment/${postId}/comment`,
+          {
+            author: 'You',
+            content: newCommentContent[postId],
+          },
+        );
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
             post.id === postId
-              ? { ...post, comments: [...post.comments, { author: 'You', content: newCommentContent[postId] }] }
-              : post
-          )
+              ? {
+                  ...post,
+                  comments: [
+                    ...post.comments,
+                    { author: 'You', content: newCommentContent[postId] },
+                  ],
+                }
+              : post,
+          ),
         );
         setNewCommentContent({ ...newCommentContent, [postId]: '' });
       } catch (error) {
@@ -89,8 +120,7 @@ const Members: React.FC = () => {
       }
     }
   };
-  
-  
+
   const handleCreatePost = async () => {
     if (newPostContent || imageFile || videoFile) {
       const formData = new FormData();
@@ -100,11 +130,15 @@ const Members: React.FC = () => {
       if (videoFile) formData.append('video', videoFile);
 
       try {
-        const response = await axios.post('http://localhost:5000/members/createPost', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await axios.post(
+          'http://localhost:5000/members/createPost',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           },
-        });
+        );
 
         const newPost = {
           ...response.data,
@@ -127,13 +161,12 @@ const Members: React.FC = () => {
       const isVideo = file.type.startsWith('video/');
       if (isImage) setImageFile(file);
       if (isVideo) setVideoFile(file);
-      return false; 
+      return false;
     },
   };
 
   return (
     <div style={{ padding: '20px', background: '#f4f7fb', minHeight: '100vh' }}>
-      
       <Card
         title="Create a Post"
         bordered={false}
@@ -193,17 +226,51 @@ const Members: React.FC = () => {
             }}
           >
             <Card.Meta
-              avatar={<Avatar style={{ backgroundColor: '#87d068' }}>{post?.author[0]}</Avatar>}
+              avatar={
+                <Avatar style={{ backgroundColor: '#87d068' }}>
+                  {post?.author[0]}
+                </Avatar>
+              }
               title={<span style={{ fontWeight: 600 }}>{post.author}</span>}
-              description={<span style={{ color: '#888' }}>{moment(post.timestamp).fromNow()}</span>}
+              description={
+                <span style={{ color: '#888' }}>
+                  {moment(post.timestamp).fromNow()}
+                </span>
+              }
             />
             <div style={{ marginTop: '10px' }}>{post?.content}</div>
-            {post.imageUrl && <img src={post?.imageUrl} alt="post" style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
-            {post.videoUrl && <video src={post?.videoUrl} controls style={{ width: '100%', marginTop: '10px', borderRadius: '6px' }} />}
+            {post.imageUrl && (
+              <img
+                src={post?.imageUrl}
+                alt="post"
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                  borderRadius: '6px',
+                }}
+              />
+            )}
+            {post.videoUrl && (
+              <video
+                src={post?.videoUrl}
+                controls
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                  borderRadius: '6px',
+                }}
+              />
+            )}
             <div style={{ marginTop: '10px' }}>
               <Tooltip title="Like">
                 <Button
-                  icon={post.likes > 0 ? <LikeFilled style={{ color: '#1890ff' }} /> : <LikeOutlined />}
+                  icon={
+                    post.likes > 0 ? (
+                      <LikeFilled style={{ color: '#1890ff' }} />
+                    ) : (
+                      <LikeOutlined />
+                    )
+                  }
                   onClick={() => handleLikePost(post?.id)}
                   style={{ borderRadius: '6px', marginRight: '8px' }}
                 >
@@ -221,7 +288,9 @@ const Members: React.FC = () => {
               dataSource={post?.comments}
               renderItem={(comment) => (
                 <Comment
-                  author={<span style={{ fontWeight: 600 }}>{comment?.author}</span>}
+                  author={
+                    <span style={{ fontWeight: 600 }}>{comment?.author}</span>
+                  }
                   content={<span>{comment?.content}</span>}
                   style={{ marginTop: '10px' }}
                 />
@@ -232,13 +301,23 @@ const Members: React.FC = () => {
               rows={1}
               placeholder="Add a comment..."
               value={newCommentContent[post.id] || ''}
-              onChange={(e) => setNewCommentContent({ ...newCommentContent, [post.id]: e.target.value })}
+              onChange={(e) =>
+                setNewCommentContent({
+                  ...newCommentContent,
+                  [post.id]: e.target.value,
+                })
+              }
               style={{ marginTop: '10px', borderRadius: '6px' }}
             />
             <Button
               type="primary"
               onClick={() => handleAddComment(post.id)}
-              style={{ marginTop: '5px', borderRadius: '6px', backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+              style={{
+                marginTop: '5px',
+                borderRadius: '6px',
+                backgroundColor: '#52c41a',
+                borderColor: '#52c41a',
+              }}
             >
               Comment
             </Button>
@@ -250,4 +329,3 @@ const Members: React.FC = () => {
 };
 
 export default Members;
-

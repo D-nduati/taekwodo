@@ -10,6 +10,10 @@ module.exports = {
         SELECT Id, Author, Content, ImageUrl, VideoUrl, Likes, CreatedAt
         FROM Posts
       `);
+      //Get all likes
+      // I will create a trigger such that
+      //  when the table Likes is gets updated it automatically updates the table for posts
+      // const likes = await query(`Select LikedBy, PostID From Likes`)
 
       // Get all comments for all posts
       const comments = await query(`SELECT * FROM Comments`);

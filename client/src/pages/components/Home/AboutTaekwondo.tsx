@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './HomePage.module.css';
 import { Typography, Row, Col, Image } from 'antd';
 
-import taekwondoPattern from '../Assets/taekwondoPattern.jpeg';
+import taekwondoPattern from '../Assets/taekwondoPattern.png';
 
 const { Title, Paragraph } = Typography;
 
@@ -26,10 +26,10 @@ const AboutTaekwondo: React.FC = () => {
         </Col>
         <Col xs={24} md={12}>
           <div className={styles.aboutImageContainer}>
-            <Image
+            <img
               src={taekwondoPattern}
               alt="Taekwondo patterns"
-              preview={false}
+              // preview={false}
               className={styles.aboutImage}
             />
           </div>

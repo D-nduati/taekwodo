@@ -3,7 +3,7 @@ import { Layout, Menu } from 'antd';
 import { HomeOutlined, TeamOutlined, SettingOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import AppHeader from '../Header/Header';
-import Logo from '../../../../assets/taelogo.png'
+import Logo from '../Assets/taelogo.png'
 
 const { Content, Footer, Sider } = Layout;
 
