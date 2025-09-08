@@ -1,5 +1,28 @@
 const { query } = require('./db');
 const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = 'uploads/';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 module.exports = {
   // GET all posts with their comments and like count
@@ -8,12 +31,8 @@ module.exports = {
       // Get all posts (with like count from Posts table)
       const posts = await query(`
         SELECT Id, Author, Content, ImageUrl, VideoUrl, Likes, CreatedAt
-        FROM Posts
+        FROM Posts ORDER BY CreatedAt DESC
       `);
-      //Get all likes
-      // I will create a trigger such that
-      //  when the table Likes is gets updated it automatically updates the table for posts
-      // const likes = await query(`Select LikedBy, PostID From Likes`)
 
       // Get all comments for all posts
       const comments = await query(`SELECT * FROM Comments`);
@@ -30,23 +49,44 @@ module.exports = {
     }
   },
 
-  // CREATE a new post
-  CreatePost: async (req, res) => {
-    const { author, content, imageUrl, videoUrl } = req.body;
-    const id = uuidv4(); // UUIDv4 for CHAR(36)
+  // CREATE a new post - with file upload middleware
+  CreatePost: [
+    upload.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]),
+    async (req, res) => {
+      try {
+        const { author, content } = req.body;
+        
+        if (!author || !content) {
+          return res.status(400).json({ message: 'Author and content are required' });
+        }
 
-    try {
-      await query(
-        `INSERT INTO Posts (Id, Author, Content, ImageUrl, VideoUrl) VALUES (?, ?, ?, ?, ?)`,
-        [id, author, content, imageUrl, videoUrl]
-      );
+        const id = uuidv4();
+        let imageUrl = null;
+        let videoUrl = null;
 
-      const [newPost] = await query(`SELECT * FROM Posts WHERE Id = ?`, [id]);
-      res.status(201).json(newPost);
-    } catch (err) {
-      res.status(500).send(err.message);
+        // Handle uploaded files
+        if (req.files) {
+          if (req.files.image) {
+            imageUrl = `/uploads/${req.files.image[0].filename}`;
+          }
+          if (req.files.video) {
+            videoUrl = `/uploads/${req.files.video[0].filename}`;
+          }
+        }
+
+        await query(
+          `INSERT INTO Posts (Id, Author, Content, ImageUrl, VideoUrl) VALUES (?, ?, ?, ?, ?)`,
+          [id, author, content, imageUrl, videoUrl]
+        );
+
+        const [newPost] = await query(`SELECT * FROM Posts WHERE Id = ?`, [id]);
+        res.status(201).json(newPost);
+      } catch (err) {
+        console.error('Create post error:', err);
+        res.status(500).json({ message: 'Error creating post', error: err.message });
+      }
     }
-  },
+  ],
 
   // UPDATE a post by ID
   UpdatePost: async (req, res) => {
@@ -83,28 +123,26 @@ module.exports = {
 
   // LIKE a post
   LikePost: async (req, res) => {
-    const { Id } = req.params; // PostID
+    const { postId } = req.params; 
     const { likedBy } = req.body;
 
     try {
-      // Prevent duplicate likes by the same user
       const [existingLike] = await query(
         `SELECT * FROM Likes WHERE PostID = ? AND LikedBy = ?`,
-        [Id, likedBy]
+        [postId, likedBy]
       );
 
       if (existingLike) {
         return res.status(400).json({ message: 'You already liked this post' });
       }
 
-      // Insert like
       await query(
         `INSERT INTO Likes (PostID, LikedBy) VALUES (?, ?)`,
-        [Id, likedBy]
+        [postId, likedBy]
       );
 
       // Update Posts table's like count
-      await query(`UPDATE Posts SET Likes = Likes + 1 WHERE Id = ?`, [Id]);
+      await query(`UPDATE Posts SET Likes = Likes + 1 WHERE Id = ?`, [postId]);
 
       res.json({ message: 'Post liked successfully' });
     } catch (err) {
@@ -114,18 +152,18 @@ module.exports = {
 
   // ADD comment to a post
   AddComment: async (req, res) => {
-    const { Id } = req.params; // PostID
-    const { author, content } = req.body;
+    const { postId } = req.params; // PostID
+    const { author, content, } = req.body;
 
     try {
       if (author !=""&& content!="") {
         await query(
           `INSERT INTO Comments (PostID, Author, Content) VALUES (?, ?, ?)`,
-          [Id, author, content]
+          [postId, author, content]
         );
 
 
-        res.status(201).json({ message: 'Comment added successfully' });
+        res.status(201).json({ message: 'Comment added successfully',status:0 });
       } else {
         res.status(403).json({ message: 'must contain author and the comment' })
       }

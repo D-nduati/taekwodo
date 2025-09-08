@@ -46,6 +46,8 @@ app.use('/settings',SettingsUsers)
 app.use('/profile',ProfileRoute);
 app.use('/quiz',clientQuiz);
 app.use('/ranks',Ranking);
+app.use('/uploads', express.static('uploads'));
+
 
 app.use('*/*',(req,res)=>{
   res.status(200).json({
