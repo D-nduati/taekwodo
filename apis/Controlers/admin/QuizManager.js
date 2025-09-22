@@ -78,5 +78,70 @@ module.exports = {
     } catch (err) {
       res.status(500).send(err.message);
     }
+  }, 
+
+   JoinEvent: async (req, res) => {
+    const { id } = req.params;
+    const {userId} = req.body;
+
+    try {
+    const result = await query('Insert into JoinedEvents(UserId ,id) values (?,?)',[userId,id]);
+    if(result.affectedRows==1){
+      res.status(201).json({message:"ok"})
+    }else{
+      res.status(304).json({message:"Some Error Occured"})
+    }
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  },
+  GetJoinedEvents: async (req, res) => {
+    const { id } = req.params; // userId
+  
+    try {
+      const sql = `
+        SELECT * 
+        FROM Events 
+        WHERE id IN (
+          SELECT id 
+          FROM JoinedEvents 
+          WHERE userId = ?
+        )
+      `;
+  
+      const results = await query(sql, [id]);
+  
+      if (results.length > 0) {
+        res.status(200).json({
+          message: "ok",
+          data: results,
+        });
+      } else {
+        res.status(200).json({
+          message: "No Events",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  LeaveJoinedEvents: async (req,res)=>{
+    const {id} = req.params;
+    try {
+       const result = await query("delete from JoinedEvents where id = ?", [id]);
+    if(result.affectedRows){
+          res.status(200).json({message:"Successfully removed from Event"})
+    }else{
+      res.status(304).json({message:"An Error occured and could not removed from Event"})
+    }
+    } catch (error) {
+      res.status(304).json({message:"An Error occured and could not removed from Event"})
+
+    }
+   
+
   }
+
+  
+
 };

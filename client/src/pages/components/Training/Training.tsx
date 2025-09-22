@@ -21,7 +21,8 @@ import {
   Progress,
   Divider,
   Popconfirm,
-  Tag
+  Tag,
+  Table
 } from 'antd';
 import { 
   FireOutlined, 
@@ -39,9 +40,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import moment, { Moment } from 'moment';
 
-// import type { Dayjs } from 'dayjs';
-// import { useNavigate } from 'react-router';
-import { history } from 'umi';
+import { history, Link } from 'umi';
 
 
 const { Content } = Layout;
@@ -52,11 +51,11 @@ interface TrainingEvent {
   id: string;
   eventName: string;
   eventDate: string;
-  eventTime: string;
-  duration: number;
+  EventTime: string;
+  Duration: number;
   status: 'Scheduled' | 'Completed' | 'Cancelled';
-  instructor: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  Instructor: string;
+  Difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   participants?: string[];
 }
 
@@ -65,26 +64,49 @@ const Training = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<TrainingEvent | null>(null);
   const [form] = Form.useForm();
+  const [progressModal,setprogressModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('upcoming');
-  // const navigate = useNavigate();
+  const [joinedEvents,setJoinedEvents] =useState([]);
+  const userId =localStorage.getItem('userId')
   
-
-  useEffect(() => {
-    fetchTrainingSessions();
-  }, []);
-
-  const fetchTrainingSessions = async () => {
+const fetchTrainingSessions = async () => {
     try {
       setLoading(true);
       const response = await axios.get<TrainingEvent[]>('http://localhost:5000/admin/getevents');
       setTrainingSessions(response.data);
+
     } catch (error) {
       message.error('Failed to fetch training sessions');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchTrainingSessions();
+  }, []);
+   const fetchJoinedEvents = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/admin/events/joined/${userId}`
+        );
+        if (response.status === 200) {
+          setJoinedEvents(response.data.data);
+        } else {
+          message.info("An Error 222 Occurred");
+        }
+      } catch (error) {
+        console.log(error);
+        message.info("No Joined Events");
+      }
+    };
+
+  useEffect(() => { 
+  
+    fetchJoinedEvents();
+  }, [userId]);  
+  
 
   const handleCreateEvent = () => {
     setSelectedEvent(null);
@@ -97,14 +119,16 @@ const Training = () => {
     form.setFieldsValue({
       ...event,
       eventDate: dayjs(event.eventDate),
-      eventTime: dayjs(event.eventTime, 'HH:mm')
+      // eventTime: dayjs(event.EventTime, 'HH:mm')
+       eventTime: moment(event.EventTime, 'HH:mm')
+
     });
     setIsModalVisible(true);
   };
 
   const handleDeleteEvent = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/admin/events/${id}`);
+      await axios.delete(`http://localhost:5000/admin/deleteEvents/${id}`);
       message.success('Event deleted successfully');
       fetchTrainingSessions();
     } catch (error) {
@@ -114,14 +138,24 @@ const Training = () => {
 
   const handleJoinEvent = async (eventId: string) => {
     try {
-      // In a real app, you would send the user ID along with the event ID
-      await axios.post(`http://localhost:5000/events/${eventId}/join`, {
-        userId: 'current-user-id' // Replace with actual user ID
+      await axios.post(`http://localhost:5000/admin/events/join/${eventId}`, {
+        userId: userId 
       });
       message.success('Successfully joined the training session!');
       fetchTrainingSessions();
     } catch (error) {
       message.error('Failed to join the session');
+    }
+  };
+  const handleLeaveEvent = async (record:any) => {
+   try {
+      await axios.delete(`http://localhost:5000/admin/events/leave/${record.id}`, {
+      });
+      message.success('Successfully leaved the training session!');
+      fetchJoinedEvents();
+    } catch (error) {
+      message.error('Failed to remove the session');
+      console.log(error)
     }
   };
 
@@ -150,7 +184,7 @@ const Training = () => {
         await axios.put(`http://localhost:5000/admin/events/${selectedEvent.id}`, formattedValues);
         message.success('Event updated successfully');
       } else {
-        await axios.post('http://localhost:5000/admin/events', formattedValues);
+        await axios.post('http://localhost:5000/admin/createEvents', formattedValues);
         message.success('Event created successfully');
       }
 
@@ -229,7 +263,7 @@ const Training = () => {
               status="processing" 
               color={event.status === 'Completed' ? 'green' : event.status === 'Cancelled' ? 'gray' : 'blue'}
               text={
-                <Tooltip title={`${event.eventName} at ${event.eventTime}`}>
+                <Tooltip title={`${event.eventName} at ${event.EventTime}`}>
                   <span style={{ fontSize: 10 }}>
                     {event.eventName.substring(0, 10)}{event.eventName.length > 10 ? '...' : ''}
                   </span>
@@ -241,6 +275,55 @@ const Training = () => {
       </div>
     );
   };
+
+  const columns = [
+{
+  title:"Event Name",
+  dataIndex:"eventName",
+  key:"eventName"
+},
+{
+  title:"EventDate",
+  dataIndex:"eventDate",
+  key:"eventDate"
+},
+{
+  title:"status",
+  dataIndex:"status",
+  key:"status"
+},
+{
+  title:"Descriptions",
+  dataIndex:"Descriptions",
+  key:"Descriptions"
+},
+{
+  title:"Difficulty",
+  dataIndex:"Difficulty",
+  key:"Difficulty"
+},{
+  title:"Duration",
+  dataIndex:"Duration",
+  key:"Duration"
+},{
+  title:"Instructor",
+  dataIndex:"Instructor",
+  key:"Instructor"
+},{
+  title:"EventTime",
+  dataIndex:"EventTime",
+  key:"EventTime"
+},
+{
+  title:"Action",
+  render:(record:any)=>(
+      <Button type='primary' size='small' onClick={()=>handleLeaveEvent(record)} danger shape='round'>
+        Remove
+      </Button>
+  )
+}
+
+  ]
 
   return (
     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '50px 20px' }}>
@@ -254,6 +337,8 @@ const Training = () => {
         <div style={{ textAlign: 'right', marginBottom: 20 }}>
           <Button 
             type="primary" 
+            size='small'
+            shape='round'
             icon={<PlusOutlined />} 
             onClick={handleCreateEvent}
             style={{ marginRight: 8 }}
@@ -261,7 +346,9 @@ const Training = () => {
             Create Event
           </Button>
           <Button 
-            onClick={() => history.push('/training/progress')}
+          shape='round'
+          size='small'
+            onClick={() => setprogressModal(true)}
             icon={<StarOutlined />}
           >
             View My Progress
@@ -324,7 +411,7 @@ const Training = () => {
                           </Button>
                         </>
                       ),
-                      activeTab === 'upcoming' && item.instructor === 'current-user' && (
+                      activeTab === 'upcoming' && item.Instructor === 'UserId' && (
                         <Button 
                           type="default" 
                           icon={<CheckCircleOutlined />}
@@ -341,18 +428,18 @@ const Training = () => {
                         <div>
                           <Text strong>{item.eventName}</Text>
                           <Tag 
-                            color={difficultyColors[item.difficulty]} 
+                            color={difficultyColors[item.Difficulty]} 
                             style={{ marginLeft: 8 }}
                           >
-                            {item.difficulty}
+                            {item.Difficulty}
                           </Tag>
                         </div>
                       }
                       description={
                         <div>
-                          <div>{`Date: ${item.eventDate} at ${item.eventTime}`}</div>
-                          <div>{`Duration: ${item.duration} minutes`}</div>
-                          <div>{`Instructor: ${item.instructor}`}</div>
+                          <div>{`Date: ${item.eventDate} at ${item.EventTime}`}</div>
+                          <div>{`Duration: ${item.Duration} minutes`}</div>
+                          <div>{`Instructor: ${item.Instructor}`}</div>
                           {item.participants && item.participants.length > 0 && (
                             <div>
                               <TeamOutlined style={{ marginRight: 4 }} />
@@ -391,7 +478,7 @@ const Training = () => {
                 <Progress 
                   percent={60} 
                   format={() => '6/10 sessions completed'}
-                  style={{ marginTop: 8 }}
+                  style={{ marginTop: 8 ,width:"100%" ,overflowX:'hidden'}}
                 />
               </div>
             </Card>
@@ -458,10 +545,10 @@ const Training = () => {
                 .map(event => (
                   <div key={event.id} style={{ marginBottom: 16 }}>
                     <Text strong>{event.eventName}</Text>
-                    <div>{dayjs(`${event.eventDate} ${event.eventTime}`).format('MMM D, YYYY h:mm A')}</div>
+                    <div>Date ~{ moment(event.eventDate).format("DD-MM-YYYY")} : Time ~ {event.EventTime}</div>
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: 4 }}>
                       <UserOutlined style={{ marginRight: 4 }} />
-                      <Text type="secondary">{event.instructor}</Text>
+                      <Text type="secondary">{event.Instructor}</Text>
                     </div>
                     <Divider style={{ margin: '12px 0' }} />
                   </div>
@@ -599,216 +686,31 @@ const Training = () => {
           </Row>
 
           <Form.Item
-            name="description"
+            name="descriptions"
             label="Additional Notes"
           >
             <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
       </Modal>
+      <Modal
+        title="Your Progress"
+        open={progressModal}
+        onCancel={() => setprogressModal(false)}
+        destroyOnClose
+        width={"80%"}
+      >
+        <Table
+        size='small'
+        dataSource={joinedEvents}
+        columns={columns}
+        scroll={{ x: "max-content" }} 
+             />
+
+      </Modal>
     </Layout>
   );
 };
 
 export default Training;
-// import React, { useEffect, useState } from 'react';
-// import { List, Card, Calendar, Layout, Typography, Row, Col, Avatar, Tooltip, message } from 'antd';
-// import { FireOutlined, ThunderboltOutlined, HeartOutlined } from '@ant-design/icons';
-// import axios from 'axios';
 
-// const { Content } = Layout;
-// const { Title, Text, Paragraph } = Typography;
-
-// interface TrainingEvent {
-//   eventName: string;
-//   eventDate: string;
-//   status: string;
-// }
-
-
-// const Training = () => {
-//   const [trainingSessions, setTrainingSessions] = useState<TrainingEvent[]>([]);
-
-//   useEffect(() => {
-//     fetchTrainingSessions();
-//   }, []);
-
-//   const fetchTrainingSessions = async () => {
-//     try {
-//       const response = await axios.get<TrainingEvent[]>('http://localhost:5000/admin/getevents');
-//       setTrainingSessions(response.data.filter(event => event.status === 'Scheduled')); // Only fetch scheduled events
-//     } catch (error) {
-//       message.error('Failed to fetch training sessions');
-//     }
-//   };
-
-//   const motivationalQuotes = [
-//     "The pain you feel today will be the strength you feel tomorrow.",
-//     "Don’t limit your challenges. Challenge your limits.",
-//     "Push yourself, because no one else is going to do it for you.",
-//   ];
-
-//   // const iconMap = {
-//   //   Sparring: <FireOutlined style={{ color: '#ff4d4f' }} />,
-//   //   Forms: <ThunderboltOutlined style={{ color: '#1890ff' }} />,
-//   //   Conditioning: <HeartOutlined style={{ color: '#52c41a' }} />,
-//   // };
-//   const iconMap: Record<string, React.ReactElement> = {
-//     Sparring: <FireOutlined style={{ color: '#ff4d4f' }} />,
-//     Forms: <ThunderboltOutlined style={{ color: '#1890ff' }} />,
-//     Conditioning: <HeartOutlined style={{ color: '#52c41a' }} />,
-//   };
-
-//   return (
-//     <Layout style={{ backgroundColor: '#f0f2f5', minHeight: '100vh', padding: '50px 20px' }}>
-//       <Content style={{ maxWidth: '1200px', margin: '0 auto' }}>
-//         {/* Section Title */}
-//         <Title level={2} style={{ textAlign: 'center', marginBottom: '40px', color: '#001529' }}>
-//           Upcoming Taekwondo Training Sessions
-//         </Title>
-
-//         <Row gutter={32}>
-//           {/* Training List */}
-//           <Col xs={24} md={12}>
-//             <Card
-//               title="Training Schedule"
-//               bordered={false}
-//               style={{
-//                 backgroundColor: '#fff',
-//                 borderRadius: '12px',
-//                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//               }}
-//             >
-//               <List
-//                 itemLayout="horizontal"
-//                 dataSource={trainingSessions}
-//                 renderItem={(item) => (
-//                   <List.Item>
-//                     <List.Item.Meta
-//                       avatar={<Avatar icon={iconMap[item.eventName] || <FireOutlined />} />} // Fallback to FireOutlined
-//                       title={<Text strong>{`Date: ${item.eventDate}`}</Text>}
-//                       description={<Text>{`Training Type: ${item.eventName}`}</Text>}
-//                     />
-//                   </List.Item>
-//                 )}
-//               />
-//             </Card>
-
-//             {/* Motivational Quotes Section */}
-//             <Card
-//               title="Motivational Quotes"
-//               bordered={false}
-//               style={{
-//                 marginTop: '20px',
-//                 backgroundColor: '#fff',
-//                 borderRadius: '12px',
-//                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//               }}
-//             >
-//               {motivationalQuotes.map((quote, index) => (
-//                 <Text
-//                   key={index}
-//                   style={{
-//                     display: 'block',
-//                     marginBottom: '10px',
-//                     fontStyle: 'italic',
-//                     color: '#001529',
-//                   }}
-//                 >
-//                   {`"${quote}"`}
-//                 </Text>
-//               ))}
-//             </Card>
-//           </Col>
-
-//           {/* Training Calendar */}
-//           <Col xs={24} md={12}>
-//             <Card
-//               title="Training Calendar"
-//               bordered={false}
-//               style={{
-//                 backgroundColor: '#fff',
-//                 borderRadius: '12px',
-//                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//               }}
-//             >
-//               <Calendar fullscreen={false} style={{ borderRadius: '12px' }} />
-//             </Card>
-//           </Col>
-//           <Title
-//             level={3}
-//             style={{ marginTop: '50px', textAlign: 'center', color: '#001529', fontWeight: 'bold' }}
-//           >
-//             Preparation Tips for Your Next Session
-//           </Title>
-//           <Row gutter={[32, 32]} justify="center" style={{ marginTop: '20px' }}>
-//             <Col xs={24} sm={8}>
-//               <Card
-//                 bordered={false}
-//                 style={{
-//                   backgroundColor: '#e6f7ff',
-//                   textAlign: 'center',
-//                   borderRadius: '12px',
-//                   padding: '20px',
-//                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//                 }}
-//               >
-//                 <Tooltip title="Stay Hydrated" color="#1890ff">
-//                   <ThunderboltOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
-//                 </Tooltip>
-//                 <Text style={{ display: 'block', marginTop: '10px' }}>Stay Hydrated</Text>
-//                 <Paragraph>
-//                   Keep yourself hydrated before, during, and after training. Water fuels your muscles and keeps you
-//                   energized.
-//                 </Paragraph>
-//               </Card>
-//             </Col>
-//             <Col xs={24} sm={8}>
-//               <Card
-//                 bordered={false}
-//                 style={{
-//                   backgroundColor: '#fff1f0',
-//                   textAlign: 'center',
-//                   borderRadius: '12px',
-//                   padding: '20px',
-//                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//                 }}
-//               >
-//                 <Tooltip title="Stretch and Warm-Up" color="#ff4d4f">
-//                   <FireOutlined style={{ fontSize: '36px', color: '#ff4d4f' }} />
-//                 </Tooltip>
-//                 <Text style={{ display: 'block', marginTop: '10px' }}>Stretch & Warm-Up</Text>
-//                 <Paragraph>
-//                   Properly warm up your body before engaging in intense training to prevent injuries and improve
-//                   performance.
-//                 </Paragraph>
-//               </Card>
-//             </Col>
-//             <Col xs={24} sm={8}>
-//               <Card
-//                 bordered={false}
-//                 style={{
-//                   backgroundColor: '#f6ffed',
-//                   textAlign: 'center',
-//                   borderRadius: '12px',
-//                   padding: '20px',
-//                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-//                 }}
-//               >
-//                 <Tooltip title="Focus on Technique" color="#52c41a">
-//                   <HeartOutlined style={{ fontSize: '36px', color: '#52c41a' }} />
-//                 </Tooltip>
-//                 <Text style={{ display: 'block', marginTop: '10px' }}>Focus on Technique</Text>
-//                 <Paragraph>
-//                   Always pay attention to your form and technique during training. Precision leads to mastery.
-//                 </Paragraph>
-//               </Card>
-//             </Col>
-//           </Row>
-//         </Row>
-//       </Content>
-//     </Layout>
-//   );
-// };
-
-// export default Training;

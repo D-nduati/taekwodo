@@ -131,3 +131,18 @@ CREATE TABLE Profiles (
     UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (UserId) REFERENCES Users(UserId)
 );
+
+ALTER TABLE Events
+  ADD Descriptions VARCHAR(400),
+  ADD Difficulty VARCHAR(100),
+  ADD Duration INT,
+  ADD Instructor VARCHAR(200),
+   ADD EventTime varchar(50);
+
+   create table JoinedEvents(
+    id char(36),
+    UserId INT,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (id) REFERENCES Events(id)
+
+   )

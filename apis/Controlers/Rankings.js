@@ -3,7 +3,6 @@ const { query } = require('./db');
 module.exports = {
   GetRankings: async (req, res) => {
     try {
-
       const sql = `
   SELECT 
     u.UserId,
@@ -20,8 +19,6 @@ module.exports = {
   ORDER BY 
     us.rank1 ASC
 `;
-
-
 
       const result = await query(sql);
       res.status(200).json(result);

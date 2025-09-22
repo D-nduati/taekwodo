@@ -19,7 +19,7 @@ const Rankings: React.FC = () => {
   useEffect(() => {
     const fetchRankings = async () => {
       try {
-        const response = await axios.get('/api/rankings'); 
+        const response = await axios.get('http://localhost:5000/ranks/rankings'); 
         const formattedData = response.data.map((item: any) => ({
           key: item.UserId,
           rank: item.Rank,

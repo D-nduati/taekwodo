@@ -18,7 +18,7 @@ const { Membersroute } = require("./Routes/MembersRoutes");
 const { SettingsUsers } = require("./Routes/SettingsRoutes");
 const { ProfileRoute } = require("./Routes/ProfileRoutes");
 const { clientQuiz } = require("./Routes/clientQuizRoute");
-const { Ranking } = require("./Routes/Ranking");
+const { Ranking } = require("./Routes/RankingRoutes");
 
 //  const {authMiddleware} = require('./middleware/authMiddleware');
 

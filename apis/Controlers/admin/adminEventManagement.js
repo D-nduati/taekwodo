@@ -4,21 +4,26 @@ const { query } = require('../db');
 module.exports = {
   GetAllEvents: async (req, res) => {
     try {
-      let result = await query('SELECT * FROM Events');
+      const result = await query('SELECT * FROM Events');  
+      if (result.length === 0) {
+        return res.status(200).json(result);
+           }
       res.status(200).json(result);
+  
     } catch (err) {
-      res.status(500).send(err.message);
+      console.error("Error fetching events:", err);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
+  
 
   NewEvent: async (req, res) => {
-    const { eventName, eventDate,status } = req.body;
+
+    const { eventName, eventDate,status ,descriptions, difficulty, duration ,eventTime ,instructor} = req.body;
     try {
       const result = await query(
-        'INSERT INTO Events (eventName, eventDate, status) VALUES(?,?,?)', [eventName, eventDate, status]
+        'INSERT INTO Events (EventName, EventDate, Status,Descriptions, Difficulty, Duration ,EventTime ,Instructor) VALUES(?,?,?,?,?,?,?,?)', [eventName, eventDate, status,descriptions, difficulty, duration ,eventTime ,instructor]
       );
-      console.log(result);
-
       res.status(201).send("Event added successfully");
     } catch (err) {
       res.status(500).send(err.message);
@@ -26,9 +31,9 @@ module.exports = {
   },
 
   DeleteEvent: async (req, res) => {
-    const { eventName } = req.body;
+    const { id } = req.params;
     try {
-      const result = await query('DELETE FROM Events WHERE eventName = ? ', [eventName]);
+      const result = await query('DELETE FROM Events WHERE id = ? ', [id]);
       if (result.affectedRows > 0) {
         res.status(200).send('Event deleted successfully');
       } else {
