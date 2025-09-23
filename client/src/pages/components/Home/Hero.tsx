@@ -4,6 +4,8 @@ import { Button, Typography, Space, Image } from 'antd';
 import { RocketOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
 
+import { history } from 'umi';
+
 import Img1 from '../Assets/her.png';
 import Img2 from '../Assets/challenge2.png';
 import Img3 from '../Assets/challenge269.png';
@@ -80,13 +82,14 @@ const Hero: React.FC = () => {
           <Space>
             <Button
               type="primary"
+              onClick={()=>history.push("/dashboard/training")}
               size="large"
               icon={<RocketOutlined />}
               className={styles.ctaButton}
             >
               Start Training
             </Button>
-            <Button size="large" className={styles.secondaryButton}>
+            <Button size="large" className={styles.secondaryButton} onClick={()=> history.push('/dashboard/educate')}>
               Learn More
             </Button>
           </Space>

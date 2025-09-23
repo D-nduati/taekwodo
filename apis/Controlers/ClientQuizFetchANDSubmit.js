@@ -1,4 +1,4 @@
-const { query } = require('./db'); 
+const { query } = require('./db');
 
 module.exports = {
   // GET: Fetch a full quiz (with questions and options)
@@ -17,6 +17,11 @@ module.exports = {
       `;
 
       const result = await query(sql, [quizID]);
+      if (result) {
+        res.status(200).json(result)
+      } else {
+        res.status(304).json({ message: "could not get quiz" })
+      }
 
       res.json(result);
     } catch (error) {
@@ -27,15 +32,21 @@ module.exports = {
 
   // POST: Submit quiz result
   SubmitQuiz: async (req, res) => {
-    const { userID, quizID, score } = req.body;
+    const { userId, quizID, score } = req.body;
 
     try {
-      await query(
+      const result = await query(
         `INSERT INTO UserQuizResults (UserID, QuizID, Score) VALUES (?, ?, ?)`,
-        [userID, quizID, score]
+        [userId, quizID, score]
       );
+      if (result.affectedRows = 1) {
 
-      res.status(201).json({ message: 'Quiz result submitted successfully' });
+        return (res.status(201).json({ message: 'Quiz result submitted successfully' }))
+      } else {
+        return (
+          res.status(301).json({ message: 'Could not Submit the Test', results: result })
+        );
+      }
     } catch (error) {
       console.error('Error submitting quiz result:', error);
       res.status(500).json({ message: 'Error submitting quiz result' });

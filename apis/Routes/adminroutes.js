@@ -4,9 +4,9 @@ const adminRoutes = express.Router();
 const {GetAllUsers, CreateNewUser,DeleteUser} = require('../Controlers/admin/adminUserMangement');
 const {GetAllEvents, NewEvent,DeleteEvent} =require('../Controlers/admin/adminEventManagement');
 const { SaveVideo, GetVideos} = require('../Controlers/admin/adminVideoManagement');
-const {  GetQuizDetails, GetAllQuizzes, AddQuestion, CreateQuiz,JoinEvent,GetJoinedEvents,LeaveJoinedEvents } = require('../Controlers/admin/QuizManager');
+const {  GetQuizDetails, GetAllQuizzes, CreateCompleteQuiz,JoinEvent,GetJoinedEvents,LeaveJoinedEvents } = require('../Controlers/admin/QuizManager');
 
-const {createQuiz} = require('../Controlers/admin/AdminQuizCreation')
+// const {createQuiz} = require('../Controlers/admin/AdminQuizCreation')
 
 adminRoutes.get('/getusers',GetAllUsers);
 adminRoutes.post('/createNewUser', CreateNewUser);
@@ -22,14 +22,11 @@ adminRoutes.post('/saveVideos',SaveVideo);
 adminRoutes.get('/getVideos',GetVideos)
 
 // for the quizes
-adminRoutes.get('quizDetails/:quizId',GetQuizDetails);
+adminRoutes.get('/quizDetails/:quizId',GetQuizDetails);
 adminRoutes.get('/getAllQuizzes',GetAllQuizzes);
-adminRoutes.post('/addQuestion',AddQuestion);
-// adminRoutes.post('/createQuiz',CreateQuiz);
 
-//Just new quiz implementedd
 
-adminRoutes.post('/createQuiz',CreateQuiz);
+adminRoutes.post('/createQuiz',CreateCompleteQuiz);
 adminRoutes.post('/events/join/:id',JoinEvent);
 adminRoutes.get('/events/joined/:id',GetJoinedEvents);
 adminRoutes.delete('/events/leave/:id',LeaveJoinedEvents);
