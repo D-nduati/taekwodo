@@ -162,7 +162,7 @@ const UserQuiz: React.FC<UserQuizProps> = () => {
       
       setTimeout(() => {
         handleBackToSelection();
-      }, 3000);
+      }, 2000);
     } catch (error) {
       notification.error({ message: 'Error submitting quiz' });
     } finally {
@@ -311,7 +311,7 @@ const UserQuiz: React.FC<UserQuizProps> = () => {
             onClick={handleSubmit}
             disabled={selectedAnswers[currentIndex] === -1}
             loading={submitting}
-            icon={<SendOutlined  style={{transform:`rotate(90)`}}/>}
+            icon={<SendOutlined  style={{transform:'rotate(-45deg)'}}/>}
           >
             Submit Quiz
           </Button>

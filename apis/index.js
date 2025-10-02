@@ -19,6 +19,7 @@ const { SettingsUsers } = require("./Routes/SettingsRoutes");
 const { ProfileRoute } = require("./Routes/ProfileRoutes");
 const { clientQuiz } = require("./Routes/clientQuizRoute");
 const { Ranking } = require("./Routes/RankingRoutes");
+const { Cert } = require("./Routes/CertificateRoutes");
 
 //  const {authMiddleware} = require('./middleware/authMiddleware');
 
@@ -47,6 +48,7 @@ app.use('/profile',ProfileRoute);
 app.use('/quiz',clientQuiz);
 app.use('/ranks',Ranking);
 app.use('/uploads', express.static('uploads'));
+app.use('/certificates', Cert);
 
 
 app.use('*/*',(req,res)=>{

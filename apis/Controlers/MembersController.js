@@ -1,8 +1,10 @@
 const { query } = require('./db');
-const { v4: uuidv4 } = require('uuid');
+
+// const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { randomUUID } = require('crypto');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -60,7 +62,8 @@ module.exports = {
           return res.status(400).json({ message: 'Author and content are required' });
         }
 
-        const id = uuidv4();
+        // const id = uuidv4();
+        let id = randomUUID();
         let imageUrl = null;
         let videoUrl = null;
 

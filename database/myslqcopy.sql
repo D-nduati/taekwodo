@@ -146,3 +146,16 @@ ALTER TABLE Events
     FOREIGN KEY (id) REFERENCES Events(id)
 
    )
+
+   CREATE TABLE Certificates (
+  CertificateId INT AUTO_INCREMENT PRIMARY KEY,
+  UserId INT NOT NULL,
+  CertificateName VARCHAR(200) NOT NULL,
+  CertificateType VARCHAR(100),
+  AwardedDate DATE DEFAULT (CURRENT_DATE),
+  ExpiryDate DATE,
+  IssuedBy VARCHAR(200),
+  FilePath VARCHAR(255),
+  CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE
+);

@@ -23,7 +23,7 @@ module.exports = {
         res.status(304).json({ message: "could not get quiz" })
       }
 
-      res.json(result);
+      // res.json(result);
     } catch (error) {
       console.error('Error fetching quiz:', error);
       res.status(500).json({ message: 'Error fetching quiz' });
@@ -34,22 +34,54 @@ module.exports = {
   SubmitQuiz: async (req, res) => {
     const { userId, quizID, score } = req.body;
 
-    try {
-      const result = await query(
-        `INSERT INTO UserQuizResults (UserID, QuizID, Score) VALUES (?, ?, ?)`,
-        [userId, quizID, score]
-      );
-      if (result.affectedRows = 1) {
-
-        return (res.status(201).json({ message: 'Quiz result submitted successfully' }))
-      } else {
-        return (
-          res.status(301).json({ message: 'Could not Submit the Test', results: result })
-        );
-      }
-    } catch (error) {
-      console.error('Error submitting quiz result:', error);
-      res.status(500).json({ message: 'Error submitting quiz result' });
+    // Validate required fields
+    if (!userId || !quizID || score === undefined) {
+        return res.status(400).json({ 
+            message: 'Missing required fields: userId, quizID, score' 
+        });
     }
-  },
+
+    try {
+        // Check if user has already taken this specific quiz
+        const existingResults = await query(
+            'SELECT UserID, QuizID, Score FROM UserQuizResults WHERE UserID = ? AND QuizID = ?',
+            [userId, quizID]
+        );
+
+        // If user has already taken this quiz
+        if (existingResults.length > 0) {
+            const previousScore = existingResults[0].Score;
+            return res.status(409).json({ 
+                message: `You have already completed this test. Your previous score was: ${previousScore}`,
+                previousScore: previousScore,
+                quizID: quizID
+            });
+        }
+
+        // If user hasn't taken the quiz, insert new result
+        const result = await query(
+            `INSERT INTO UserQuizResults (UserID, QuizID, Score) VALUES (?, ?, ?)`,
+            [userId, quizID, score]
+        );
+
+        if (result.affectedRows === 1) {
+            return res.status(201).json({ 
+                message: 'Quiz result submitted successfully',
+                score: score,
+                quizID: quizID
+            });
+        } else {
+            return res.status(500).json({ 
+                message: 'Failed to submit quiz result' 
+            });
+        }
+
+    } catch (error) {
+        console.error('Quiz submission error:', error);
+        return res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
+    }
+}
 };
