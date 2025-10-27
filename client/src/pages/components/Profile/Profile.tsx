@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Avatar, List, Layout, Typography, Button, Badge, Tag, Space, message } from 'antd';
+import { Card, Avatar, List, Layout, Typography, Button,  Tag, Space, message } from 'antd';
 import { Link } from 'umi';
-import { UserOutlined, TrophyOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
+import { UserOutlined, TrophyOutlined, SettingOutlined,  } from '@ant-design/icons';
 import axios from 'axios'; 
 
 const { Title, Text } = Typography;
